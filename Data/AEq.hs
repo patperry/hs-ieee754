@@ -25,23 +25,26 @@ class Eq a => AEq a where
     identical :: a -> a -> Bool
     
     -- | An approximate equality comparison operator.  For @RealFloat@ values, 
-    -- @(~==) x y = (eqRel  epsilon x y) || (abs (x - y) < epsilon')@.
+    -- @(~==) x y =   (eqRel delta x y) 
+    --             || (abs (x - y) < epsilon) 
+    --             || (isNaN x && isNaN y)@.
     (~==) :: a -> a -> Bool
     
-    -- | An approximate inequality comparison operator.  For @RealFloat@ values, 
-    -- @(~==) x y = (neqRel  epsilon x y) && (abs (x - y) >= epsilon')@.
+    -- | An approximate inequality comparison operator.  The default 
+    -- implementaiton is @x ~/= y = not (x ~== y)@.
     (~/=) :: a -> a -> Bool
+    x ~/= y = not (x ~== y)
 
 
 instance AEq Float where
     identical = identicalF
-    (~==) x y = (eqRel  epsilon x y) || (abs (x - y) < epsilon')
-    (~/=) x y = (neqRel epsilon x y) && (abs (x - y) >= epsilon')
+    (~==) x y =   
+        (eqRel delta x y) || (abs (x - y) < epsilon) || (isNaN x && isNaN y)
 
 instance AEq Double where
     identical = identicalF
-    (~==) x y = (eqRel  epsilon x y) || (abs (x - y) < epsilon')
-    (~/=) x y = (neqRel epsilon x y) && (abs (x - y) >= epsilon')
+    (~==) x y = 
+        (eqRel delta x y) || (abs (x - y) < epsilon) || (isNaN x && isNaN y)
 
 instance (RealFloat a, AEq a) => AEq (Complex a) where
     identical (x1 :+ y1) (x2 :+ y2) = (identical x1 x2) && (identical y1 y2)
