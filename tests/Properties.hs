@@ -20,13 +20,6 @@ incSignif i x =
 
 ------------------------- NaN-aware min and max -----------------------------
 
-prop_identicalF_nan =
-    nan `identicalF` nan
-
-prop_identicalF (x :: D) =
-    x `identicalF` x
-
-
 prop_minF (x :: D) (y :: D) =
     not (isNaN x || isNaN y) ==> minF x y == min x y
 
@@ -221,10 +214,6 @@ prop_minus_b1 (x :: D) =
 
 main = do
     let runT s a = do print s; a
-
-    runT "identicalF" $ do
-        quickCheck prop_identicalF_nan
-        quickCheck prop_identicalF
 
     runT "minF" $ do
         quickCheck prop_minF 

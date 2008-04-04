@@ -22,14 +22,9 @@
 -- which is based on the package @fcmp@ by T.C. Belding.
 module Numeric.IEEE (
     
-    -- * Structural equality
-    identicalF,
-    
     -- * NaN-aware minimum and maximum
     maxF,
     minF,
-    maximumF,
-    minimumF,
     
     -- * Relative comparisons
     delta,
@@ -44,14 +39,6 @@ module Numeric.IEEE (
     gteRel,
     compareRel,
     ) where
-
-import Data.List ( foldl1' )
-
--- | Equivalent to @x == y || (isNaN x && isNaN y)@.
-identicalF :: RealFloat a => a -> a -> Bool
-identicalF x y =
-    x == y || (isNaN x && isNaN y)
-{-# INLINE identicalF #-}
 
 -- | A version of 'max' that returns @NaN@ if either argument is @NaN@.
 maxF :: RealFloat a => a -> a -> a
@@ -68,15 +55,6 @@ minF a b
     | b > a     = a
     | otherwise = b
 {-# INLINE minF #-}
-
--- | Equivalent to @foldl1' maxF@.
-maximumF :: RealFloat a => [a] -> a
-maximumF = foldl1' maxF 
-
--- | Equivalent to @foldl1' minF@.
-minimumF :: RealFloat a => [a] -> a
-minimumF = foldl1' minF 
-
 
 
 epsHelp :: RealFloat a => (Int -> Int) -> a
