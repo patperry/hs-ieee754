@@ -65,11 +65,11 @@ epsHelp = epsHelp' undefined
         let digits = floatDigits a
         in encodeFloat 1 $ f digits
 
--- | A value suitable for relative comparisons when only half of of the 
+-- | A value suitable for relative comparisons when half of of the 
 -- digits of precision are important.  For @Double@s this value is 
--- @1.4901161193847656e-8@.
+-- @7.450580596923828e-9@.
 delta :: RealFloat a => a
-delta =  epsHelp (\digits -> negate $ digits `div` 2)
+delta =  epsHelp (\digits -> negate $ digits `div` 2 + 1)
 
 -- | The smallest positive floating-point number x such that @1 + x != 1@.
 -- Suitable for relative comparisons when all but the least significant digit
