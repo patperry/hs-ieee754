@@ -25,8 +25,9 @@ class Eq a => AEq a where
     (===) :: a -> a -> Bool
     
     -- | An approximate equality comparison operator.  For @RealFloat@ values, 
-    -- @(~==) x y =   (eqRel delta x y) 
+    -- @(~==) x y =   (x == y)
     --             || (abs (x - y) < epsilon) 
+    --             || (eqRel delta x y) 
     --             || (isNaN x && isNaN y)@.
     (~==) :: a -> a -> Bool
     
@@ -35,13 +36,13 @@ instance AEq Float where
     (===) x y =
         (x == y) || (isNaN x && isNaN y)
     (~==) x y =   
-        (eqRel delta x y) || (abs (x - y) < epsilon) || (isNaN x && isNaN y)
+        (x == y) || (abs (x - y) < epsilon) || (eqRel delta x y) || (isNaN x && isNaN y)
 
 instance AEq Double where
     (===) x y =
         (x == y) || (isNaN x && isNaN y)
     (~==) x y = 
-        (eqRel delta x y) || (abs (x - y) < epsilon) || (isNaN x && isNaN y)
+        (x == y) || (abs (x - y) < epsilon) || (eqRel delta x y) || (isNaN x && isNaN y)
 
 instance (RealFloat a, AEq a) => AEq (Complex a) where
     (===) (x1 :+ y1) (x2 :+ y2) = ((===) x1 x2) && ((===) y1 y2)
