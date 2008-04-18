@@ -4,7 +4,7 @@
 -- Copyright  : Copyright (c) 2008, Patrick Perry <patperry@stanford.edu>
 -- License    : BSD3
 -- Maintainer : Patrick Perry <patperry@stanford.edu>
--- Stability  : expirimental
+-- Stability  : experimental
 --
 -- Approximate comparison of floating point numbers based on the
 -- algorithm in Section 4.2.2 of Knuth's _Seminumerical Algorithms_

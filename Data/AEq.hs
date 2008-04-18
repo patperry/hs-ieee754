@@ -4,7 +4,7 @@
 -- Copyright  : Copyright (c) 2008, Patrick Perry <patperry@stanford.edu>
 -- License    : BSD3
 -- Maintainer : Patrick Perry <patperry@stanford.edu>
--- Stability  : expirimental
+-- Stability  : experimental
 --
 -- A type class for approximate and exact equalilty comparisons and instances 
 -- for common data types.  Not that the default instance for Complex uses the
