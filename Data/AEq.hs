@@ -7,8 +7,7 @@
 -- Stability  : experimental
 --
 -- A type class for approximate and exact equalilty comparisons and instances 
--- for common data types.  Not that the default instance for Complex uses the
--- polar form of the number for approximate comparison.
+-- for common data types.  
 module Data.AEq
     where
 
@@ -30,6 +29,8 @@ class Eq a => AEq a where
     --             || (abs (x - y) < epsilon) 
     --             || (eqRel delta x y) 
     --             || (isNaN x && isNaN y)@.
+    -- For Complex numbers, the if the real and imaginary parts are not
+    -- approximately equal, the polar forms are compared, instead.
     (~==) :: a -> a -> Bool
     
 
@@ -47,12 +48,12 @@ instance AEq Double where
 
 instance (RealFloat a, AEq a) => AEq (Complex a) where
     (===) (x1 :+ y1) (x2 :+ y2) = ((===) x1 x2) && ((===) y1 y2)
-    (~==) x y = 
-        let (r1,c1) = polar x
-            (r2,c2) = polar y
+    (~==) z1@(x1 :+ y1) z2@(x2 :+ y2) = 
+        let (r1,c1) = polar z1
+            (r2,c2) = polar z2
             c  = min c1 c2
             c' = max c1 c2
-        in (r1 ~== r2) && ((c1 ~== c2) || (c + 2 * pi ~== c'))
+        in (x1 ~== x2 && y1 ~== y2) || (r1 ~== r2) && ((c1 ~== c2) || (c + 2 * pi ~== c'))
 
 instance AEq Bool where
     (===) = (==)
