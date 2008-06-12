@@ -12,7 +12,6 @@ module Data.AEq
     where
 
 import Data.Int
-import Data.Maybe    ( fromMaybe )
 import Data.Word
 import Data.Complex
 import Numeric.IEEE
@@ -120,8 +119,13 @@ instance (AEq a) => AEq [a] where
     (~==) xs ys = and $ zipWith (~==) xs ys
 
 instance (AEq a) => AEq (Maybe a) where
-    (===) x y = fromMaybe True $ do x >>= \x' -> y >>= \y' -> return ((===) x' y')
-    (~==) x y = fromMaybe True $ do x >>= \x' -> y >>= \y' -> return ((~==) x' y')
+    (===) Nothing  Nothing  = True
+    (===) (Just x) (Just y) = (===) x y
+    (===) _ _ = False
+    
+    (~==) Nothing  Nothing  = True
+    (~==) (Just x) (Just y) = (~==) x y
+    (~==) _ _ = False
     
 instance (AEq a, AEq b) => AEq (Either a b) where
     (===) (Left a1)  (Left a2)  = (===) a1 a2
