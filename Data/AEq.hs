@@ -114,9 +114,14 @@ instance (AEq a, AEq b, AEq c, AEq d) => AEq (a,b,c,d) where
     (===) (a1,b1,c1,d1) (a2,b2,c2,d2) = ((===) a1 a2) && ((===) b1 b2) && ((===) c1 c2) && ((===) d1 d2)
     (~==) (a1,b1,c1,d1) (a2,b2,c2,d2) = ((~==) a1 a2) && ((~==) b1 b2) && ((~==) c1 c2) && ((~==) d1 d2)
 
+compareListsWith :: (a -> a -> Bool) -> [a] -> [a] -> Bool
+compareListsWith _ [] [] = True
+compareListsWith f (x:xs) (y:ys) = (f x y) && (compareListsWith f xs ys)
+compareListsWith _ _ _ = False
+
 instance (AEq a) => AEq [a] where
-    (===) xs ys = and $ zipWith (===) xs ys
-    (~==) xs ys = and $ zipWith (~==) xs ys
+    (===) = compareListsWith (===)
+    (~==) = compareListsWith (~==)
 
 instance (AEq a) => AEq (Maybe a) where
     (===) Nothing  Nothing  = True
