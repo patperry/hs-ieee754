@@ -8,8 +8,9 @@
 --
 -- A type class for approximate and exact equalilty comparisons and instances 
 -- for common data types.  
-module Data.AEq
-    where
+module Data.AEq (
+    AEq(..),
+    ) where
 
 import Data.Int
 import Data.Word
