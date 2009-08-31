@@ -1,5 +1,5 @@
 name:            ieee
-version:         0.4
+version:         0.5
 homepage:        http://stat.stanford.edu/~patperry/code/ieee
 synopsis:        Approximate comparisons for IEEE floating point numbers
 description:
@@ -16,7 +16,7 @@ author:          Patrick Perry
 maintainer:      Patrick Perry <patperry@stanford.edu>
 cabal-version: >= 1.2.0
 build-type:      Custom
-tested-with:     GHC ==6.8.2
+tested-with:     GHC ==6.10.1
 
 extra-source-files: tests/Properties.hs
 
@@ -24,6 +24,6 @@ library
     exposed-modules: Data.AEq
                      Numeric.IEEE
 
-    build-depends: base
+    build-depends:   base
 
     ghc-options:     -Wall

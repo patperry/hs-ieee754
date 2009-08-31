@@ -12,6 +12,7 @@ module Data.AEq (
     AEq(..),
     ) where
 
+import Foreign.C.Types
 import Data.Int
 import Data.Word
 import Data.Complex
@@ -33,32 +34,48 @@ class Eq a => AEq a where
     -- approximately equal, the polar forms are compared, instead.
     (~==) :: a -> a -> Bool
     
+identicalRealFloat :: (RealFloat a) => a -> a -> Bool
+identicalRealFloat x y = 
+    (x == y) || (isNaN x && isNaN y)
+
+approxEqRealFloat :: (RealFloat a) => a -> a -> Bool
+approxEqRealFloat x y =
+    (x == y) || (abs (x - y) < epsilon) || (eqRel delta x y) || (isNaN x && isNaN y)
+
+identicalComplexFloat :: (RealFloat a) => Complex a -> Complex a -> Bool
+identicalComplexFloat (x1 :+ y1) (x2 :+ y2) =
+    (identicalRealFloat x1 x2) && (identicalRealFloat y1 y2)
+
+approxEqComplexFloat :: (RealFloat a) => Complex a -> Complex a -> Bool
+approxEqComplexFloat z1@(x1 :+ y1) z2@(x2 :+ y2) = let
+    (r1,c1) = polar z1
+    (r2,c2) = polar z2
+    c  = min c1 c2
+    c' = max c1 c2 in
+    ((approxEqRealFloat x1 x2 && approxEqRealFloat y1 y2) 
+     || ((approxEqRealFloat r1 r2) 
+         && ((approxEqRealFloat c1 c2) || (approxEqRealFloat (c + 2 * pi) c'))))
 
 instance AEq Float where
-    (===) x y =
-        (x == y) || (isNaN x && isNaN y)
-    (~==) x y =   
-        (x == y) || (abs (x - y) < epsilon) || (eqRel delta x y) || (isNaN x && isNaN y)
-
+    (===) = identicalRealFloat
+    (~==) = approxEqRealFloat
+        
 instance AEq Double where
-    (===) x y =
-        (x == y) || (isNaN x && isNaN y)
-    (~==) x y = 
-        (x == y) || (abs (x - y) < epsilon) || (eqRel delta x y) || (isNaN x && isNaN y)
+    (===) = identicalRealFloat
+    (~==) = approxEqRealFloat
 
-instance (RealFloat a, AEq a) => AEq (Complex a) where
-    (===) (x1 :+ y1) (x2 :+ y2) = ((===) x1 x2) && ((===) y1 y2)
-    (~==) z1@(x1 :+ y1) z2@(x2 :+ y2) = 
-        let (r1,c1) = polar z1
-            (r2,c2) = polar z2
-            c  = min c1 c2
-            c' = max c1 c2
-        in (x1 ~== x2 && y1 ~== y2) || (r1 ~== r2) && ((c1 ~== c2) || (c + 2 * pi ~== c'))
+instance (RealFloat a) => AEq (Complex a) where
+    (===) = identicalComplexFloat
+    (~==) = approxEqComplexFloat
 
 instance AEq Bool where
     (===) = (==)
     (~==) = (==)
-    
+
+instance AEq Char where
+    (===) = (==)
+    (~==) = (==)
+        
 instance AEq Int where
     (===) = (==)
     (~==) = (==)
@@ -76,6 +93,14 @@ instance AEq Int32 where
     (~==) = (==)
 
 instance AEq Int64 where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq Integer where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq Ordering where
     (===) = (==)
     (~==) = (==)
 
@@ -103,6 +128,102 @@ instance AEq () where
     (===) = (==)
     (~==) = (==)
     
+instance AEq CChar where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CSChar where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CUChar where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CShort where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CUShort where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CInt where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CUInt where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CLong where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CULong where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CPtrdiff where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CSize where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CWchar where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CSigAtomic where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CLLong where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CULLong where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CIntPtr where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CUIntPtr where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CIntMax where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CUIntMax where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CClock where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CTime where
+    (===) = (==)
+    (~==) = (==)
+
+instance AEq CFloat where
+    (===) = identicalRealFloat
+    (~==) = approxEqRealFloat
+        
+instance AEq CDouble where
+    (===) = identicalRealFloat
+    (~==) = approxEqRealFloat
+
+instance AEq CLDouble where
+    (===) = identicalRealFloat
+    (~==) = approxEqRealFloat
+
 instance (AEq a, AEq b) => AEq (a,b) where
     (===) (a1,b1) (a2,b2) = ((===) a1 a2) && ((===) b1 b2)
     (~==) (a1,b1) (a2,b2) = ((~==) a1 a2) && ((~==) b1 b2)
@@ -114,6 +235,11 @@ instance (AEq a, AEq b, AEq c) => AEq (a,b,c) where
 instance (AEq a, AEq b, AEq c, AEq d) => AEq (a,b,c,d) where
     (===) (a1,b1,c1,d1) (a2,b2,c2,d2) = ((===) a1 a2) && ((===) b1 b2) && ((===) c1 c2) && ((===) d1 d2)
     (~==) (a1,b1,c1,d1) (a2,b2,c2,d2) = ((~==) a1 a2) && ((~==) b1 b2) && ((~==) c1 c2) && ((~==) d1 d2)
+
+instance (AEq a, AEq b, AEq c, AEq d, AEq e) => AEq (a,b,c,d,e) where
+    (===) (a1,b1,c1,d1,e1) (a2,b2,c2,d2,e2) = ((===) a1 a2) && ((===) b1 b2) && ((===) c1 c2) && ((===) d1 d2) && ((===) e1 e2)
+    (~==) (a1,b1,c1,d1,e1) (a2,b2,c2,d2,e2) = ((~==) a1 a2) && ((~==) b1 b2) && ((~==) c1 c2) && ((~==) d1 d2) && ((~==) e1 e2)
+
 
 compareListsWith :: (a -> a -> Bool) -> [a] -> [a] -> Bool
 compareListsWith _ [] [] = True
