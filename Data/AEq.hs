@@ -24,6 +24,7 @@ class Eq a => AEq a where
     -- | A reliable way to test if two values are exactly equal.  For floating
     -- point values, this will consider @NaN@ to be (===) to @NaN@.
     (===) :: a -> a -> Bool
+    (===) = (==)
     
     -- | An approximate equality comparison operator.  For @RealFloat@ values, 
     -- @(~==) x y =   (x == y)
@@ -33,7 +34,8 @@ class Eq a => AEq a where
     -- For Complex numbers, the if the real and imaginary parts are not
     -- approximately equal, the polar forms are compared, instead.
     (~==) :: a -> a -> Bool
-    
+    (~==) = (==)   
+ 
 identicalRealFloat :: (RealFloat a) => a -> a -> Bool
 identicalRealFloat x y = 
     (x == y) || (isNaN x && isNaN y)
