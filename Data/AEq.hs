@@ -222,9 +222,16 @@ instance AEq CDouble where
     (===) = identicalRealFloat
     (~==) = approxEqRealFloat
 
+{-
+ - CLDouble was removed[1] from GHC 6.12 but is due to return later[2].
+ -
+ - [1] http://hackage.haskell.org/trac/ghc/ticket/2793
+ - [2] http://hackage.haskell.org/trac/ghc/ticket/3353
+ -
 instance AEq CLDouble where
     (===) = identicalRealFloat
     (~==) = approxEqRealFloat
+-}
 
 instance (AEq a, AEq b) => AEq (a,b) where
     (===) (a1,b1) (a2,b2) = ((===) a1 a2) && ((===) b1 b2)
