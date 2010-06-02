@@ -1,0 +1,3 @@
+Changes in 0.6.1:
+
+ * Remove AEq instance for CLDouble (thanks to Bjorn Buckwalter)
