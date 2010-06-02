@@ -1,9 +1,10 @@
+{-# LANGUAGE CPP #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module     : Data.AEq
--- Copyright  : Copyright (c) 2008, Patrick Perry <patperry@stanford.edu>
+-- Copyright  : Copyright (c) 2010, Patrick Perry <patperry@gmail.com>
 -- License    : BSD3
--- Maintainer : Patrick Perry <patperry@stanford.edu>
+-- Maintainer : Patrick Perry <patperry@gmail.com>
 -- Stability  : experimental
 --
 -- A type class for approximate and exact equalilty comparisons and instances 
@@ -222,16 +223,20 @@ instance AEq CDouble where
     (===) = identicalRealFloat
     (~==) = approxEqRealFloat
 
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ <= 610
+
 {-
  - CLDouble was removed[1] from GHC 6.12 but is due to return later[2].
  -
  - [1] http://hackage.haskell.org/trac/ghc/ticket/2793
  - [2] http://hackage.haskell.org/trac/ghc/ticket/3353
- -
+ -}
+ 
 instance AEq CLDouble where
     (===) = identicalRealFloat
     (~==) = approxEqRealFloat
--}
+
+#endif
 
 instance (AEq a, AEq b) => AEq (a,b) where
     (===) (a1,b1) (a2,b2) = ((===) a1 a2) && ((===) b1 b2)

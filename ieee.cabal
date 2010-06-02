@@ -16,7 +16,7 @@ author:          Patrick Perry
 maintainer:      Patrick Perry <patperry@gmail.com>
 cabal-version: >= 1.2.0
 build-type:      Custom
-tested-with:     GHC ==6.10.1
+tested-with:     GHC ==6.12.2
 
 extra-source-files: tests/Properties.hs
 
@@ -27,3 +27,5 @@ library
     build-depends:   base >= 3 && < 5
 
     ghc-options:     -Wall
+
+    extensions:      CPP
