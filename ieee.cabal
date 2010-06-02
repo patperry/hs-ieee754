@@ -1,5 +1,5 @@
 name:            ieee
-version:         0.6
+version:         0.6.1
 homepage:        http://github.com/patperry/hs-ieee
 synopsis:        Approximate comparisons for IEEE floating point numbers
 description:
