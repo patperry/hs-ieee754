@@ -1,147 +1,147 @@
+{-# LANGUAGE ForeignFunctionInterface #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module     : Numeric.IEEE
--- Copyright  : Copyright (c) 2008, Patrick Perry <patperry@stanford.edu>
+-- Copyright  : Copyright (c) 2010, Patrick Perry <patperry@gmail.com>
 -- License    : BSD3
--- Maintainer : Patrick Perry <patperry@stanford.edu>
+-- Maintainer : Patrick Perry <patperry@gmail.com>
 -- Stability  : experimental
 --
--- Approximate comparison of floating point numbers based on the
--- algorithm in Section 4.2.2 of Knuth's _Seminumerical Algorithms_
--- and NaN-aware minimum and maximum.
--- 
--- Relative accuracy within @eps@ is measured using an interval of size @2*r@,
--- where @r = 2^k eps@, and @k@ is the maximum exponent of @x@ and @y@.  If 
--- @x@ and @y@ lie within this interval, they are considered approximately 
--- equal.
--- 
--- Note that @x@ and @y@ are compared to relative accuracy, so these functions
--- are not suitable for testing whether a value is approximately zero.
---
--- The implementation is based on the GNU Scientific Library implementation, 
--- which is based on the package @fcmp@ by T.C. Belding.
 module Numeric.IEEE (
-    
-    -- * NaN-aware minimum and maximum
-    maxF,
-    minF,
-    
-    -- * Relative comparisons
-    delta,
-    epsilon,
-    epsilon',
-
-    eqRel,
-    neqRel,
-    ltRel,
-    lteRel,
-    gtRel,
-    gteRel,
-    compareRel,
+    IEEE(..),
     ) where
 
--- | A version of 'max' that returns @NaN@ if either argument is @NaN@.
-maxF :: RealFloat a => a -> a -> a
-maxF a b
-    | isNaN a   = a
-    | b < a     = a
-    | otherwise = b
-{-# INLINE maxF #-}
+import Foreign.C.Types( CFloat, CDouble )
 
--- | A version of 'min' that returns @NaN@ if either argument is @NaN@.
-minF :: RealFloat a => a -> a -> a
-minF a b
-    | isNaN a   = a
-    | b > a     = a
-    | otherwise = b
-{-# INLINE minF #-}
+-- | IEEE floating point numbers.
+class (RealFloat a) => IEEE a where
+    -- | Infinity value.
+    infinity :: a
+
+    -- | NaN value.
+    nan :: a
+
+    -- | The smallest nonzero representable normalized value.
+    minNormal :: a
+
+    -- | The largest finite representable value.
+    maxFinite :: a
+
+    -- | The smallest positive floating-point number @x@ such that @1 + x /= 1@.
+    epsilon :: a
+
+    -- | The number of significand bits which are equal in the two arguments
+    -- (ported from the Tango math library for D).  The result is between
+    -- @0@ and @floatDigits@.
+    feqrel :: a -> a -> Int
+    
+    -- | Logically equivalent to @exp x - 1@, but more accurate for small
+    -- @x@.
+    expm1 :: a -> a
+    
+    -- | Logically equivalent to @log (1 + x)@, but more accurate for small
+    -- @x@.
+    log1p :: a -> a
+    
+    -- | Return the maximum of two values; if one value is @NaN@, return the
+    -- other.
+    maxNum :: a -> a -> a
+    maxNum x y | isNaN x   = y
+               | otherwise = max x y
+    {-# INLINE maxNum #-}
+
+    -- | Return the minimum of two values; if one value is @NaN@, return the
+    -- other.
+    minNum :: a -> a -> a
+    minNum x y | isNaN y   = x
+               | otherwise = min x y
+    {-# INLINE minNum #-}
 
 
-epsHelp :: RealFloat a => (Int -> Int) -> a
-epsHelp = epsHelp' undefined
-    where
-    epsHelp' :: RealFloat a => a -> (Int -> Int) -> a
-    epsHelp' a f =
-        let digits = floatDigits a
-        in encodeFloat 1 $ f digits
-
--- | A value suitable for relative comparisons when half of of the 
--- digits of precision are important.  For @Double@s this value is 
--- @7.450580596923828e-9@.
-delta :: RealFloat a => a
-delta =  epsHelp (\digits -> negate $ digits `div` 2 + 1)
-
--- | The smallest positive floating-point number x such that @1 + x != 1@.
--- Suitable for relative comparisons when all but the least significant digit
--- of precision are important.  For @Double@s this value is 
--- @2.220446049250313e-16@.
-epsilon :: RealFloat a => a
-epsilon = epsHelp (\digits -> negate $ digits - 1)
-
--- | The smallest positive floating-point number x such that @1 - x != 1@.
--- Suitable for relative comparisons when one number is exact and all but the 
--- least significant digit of precision in the other number are important.  
--- For @Double@s this value is @1.1102230246251565e-16@.
-epsilon' :: RealFloat a => a
-epsilon' = epsHelp (\digits -> negate $ digits)
+instance IEEE Float where
+    infinity = 1/0
+    {-# INLINE infinity #-}
+    nan = 0/0
+    {-# INLINE nan #-}
+    minNormal = 1.17549435e-38
+    {-# INLINE minNormal #-}
+    maxFinite = 3.40282347e+38
+    {-# INLINE maxFinite #-}
+    epsilon = 1.19209290e-07
+    {-# INLINE epsilon #-}
+    feqrel = c_feqrelf
+    {-# INLINE feqrel #-}
+    expm1 = c_expm1f
+    {-# INLINE expm1 #-}
+    log1p = c_log1pf
+    {-# INLINE log1p #-}
 
 
-compareRelHelp :: (RealFloat a) => (a -> a -> Bool) -> a -> a -> a -> Bool
-compareRelHelp cmp tol x y =
-    let e           = max (exponent x) (exponent y)
-        (epsM,epsE) = decodeFloat tol
-        r           = encodeFloat epsM (epsE + e)
-        diff        = x - y
-    in
-        diff `cmp` r
-{-# INLINE compareRelHelp #-}
+instance IEEE CFloat where
+    infinity = 1/0
+    {-# INLINE infinity #-}
+    nan = 0/0
+    {-# INLINE nan #-}
+    minNormal = 1.17549435e-38
+    {-# INLINE minNormal #-}
+    maxFinite = 3.40282347e+38
+    {-# INLINE maxFinite #-}
+    epsilon = 1.19209290e-07
+    {-# INLINE epsilon #-}
+    feqrel x y = c_feqrelf (realToFrac x) (realToFrac y)
+    {-# INLINE feqrel #-}
+    expm1 x = realToFrac $ c_expm1f (realToFrac x)
+    {-# INLINE expm1 #-}
+    log1p x = realToFrac $ c_log1pf (realToFrac x)
+    {-# INLINE log1p #-}
 
--- | @eqRel eps x y@. Relative equality comparator.
--- Returns @False@ if either argument is @NaN@.
-eqRel :: (RealFloat a) => a -> a -> a -> Bool
-eqRel  = compareRelHelp (\diff r -> abs diff <= r)
-{-# INLINE eqRel  #-}
+instance IEEE Double where
+    infinity = 1/0
+    {-# INLINE infinity #-}
+    nan = 0/0
+    {-# INLINE nan #-}
+    minNormal = 2.2250738585072014e-308
+    {-# INLINE minNormal #-}
+    maxFinite = 1.7976931348623157e+308
+    {-# INLINE maxFinite #-}
+    epsilon = 2.2204460492503131e-16
+    {-# INLINE epsilon #-}
+    feqrel = c_feqrel
+    {-# INLINE feqrel #-}
+    expm1 = c_expm1
+    {-# INLINE expm1 #-}
+    log1p = c_log1p
+    {-# INLINE log1p #-}
 
--- | @neqRel eps x y@. Relative inequality comparator.
--- Returns @False@ if either argument is @NaN@.
-neqRel :: (RealFloat a) => a -> a -> a -> Bool
-neqRel = compareRelHelp (\diff r -> abs diff > r)
-{-# INLINE neqRel #-}
+instance IEEE CDouble where
+    infinity = 1/0
+    {-# INLINE infinity #-}
+    nan = 0/0
+    {-# INLINE nan #-}
+    minNormal = 2.2250738585072014e-308
+    {-# INLINE minNormal #-}
+    maxFinite = 1.7976931348623157e+308
+    {-# INLINE maxFinite #-}
+    epsilon = 2.2204460492503131e-16
+    {-# INLINE epsilon #-}
+    feqrel x y = c_feqrel (realToFrac x) (realToFrac y)
+    {-# INLINE feqrel #-}
+    expm1 x = realToFrac $ c_expm1 (realToFrac x)
+    {-# INLINE expm1 #-}
+    log1p x = realToFrac $ c_log1p (realToFrac x)
+    {-# INLINE log1p #-}
 
--- | @ltRel eps x y@. Relative less-than comparator.  
--- Returns @False@ if either argument is @NaN@.
-ltRel :: (RealFloat a) => a -> a -> a -> Bool
-ltRel  = compareRelHelp (\diff r -> diff < -r)
-{-# INLINE ltRel  #-}
+foreign import ccall unsafe "feqrel.h feqrel"
+    c_feqrel :: Double -> Double -> Int
+foreign import ccall unsafe "feqrel.h feqrelf"
+    c_feqrelf :: Float -> Float -> Int
 
--- | @lteRel eps x y@. Relative less-than-or-equal-to comparator. 
--- Returns @False@ if either argument is @NaN@.
-lteRel :: (RealFloat a) => a -> a -> a -> Bool
-lteRel = compareRelHelp (\diff r -> diff <= r)
-{-# INLINE lteRel #-}
+foreign import ccall unsafe "math.h expm1"
+    c_expm1 :: Double -> Double
+foreign import ccall unsafe "math.h expm1f"
+    c_expm1f :: Float -> Float
 
--- | @gtRel eps x y@. Relative greater-than comparator.
--- Returns @False@ if either argument is @NaN@.
-gtRel :: (RealFloat a) => a -> a -> a -> Bool
-gtRel  = compareRelHelp (\diff r -> diff > r)
-{-# INLINE gtRel  #-}
-
--- | @gteRel eps x y@. Relative greater-than-or-equal-to comparator.
--- Returns @False@ if either argument is @NaN@.
-gteRel :: (RealFloat a) => a -> a -> a -> Bool
-gteRel = compareRelHelp (\diff r -> diff >= -r)
-{-# INLINE gteRel #-}
-
--- | @compareRel eps x y@ gives an ordering of @x@ and @y@ based on a 
--- relative comparison of accuracy @eps@.  This will call @error@ if either
--- argument is @NaN@.
-compareRel :: RealFloat a => a -> a -> a -> Ordering
-compareRel eps x y =
-    if ltRel eps x y
-        then LT
-        else if gtRel eps x y
-            then GT
-            else if eqRel eps x y
-                then EQ
-                else error $ "NaN comparison"
-{-# INLINE compareRel #-}
+foreign import ccall unsafe "math.h log1p"
+    c_log1p :: Double -> Double
+foreign import ccall unsafe "math.h log1p"
+    c_log1pf :: Float -> Float

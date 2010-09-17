@@ -1,5 +1,5 @@
 name:            ieee
-version:         0.6.1
+version:         0.7
 homepage:        http://github.com/patperry/hs-ieee
 synopsis:        Approximate comparisons for IEEE floating point numbers
 description:
@@ -16,9 +16,13 @@ author:          Patrick Perry
 maintainer:      Patrick Perry <patperry@gmail.com>
 cabal-version: >= 1.2.0
 build-type:      Custom
-tested-with:     GHC ==6.12.2
+tested-with:     GHC ==6.12.3
 
-extra-source-files: NEWS tests/Properties.hs
+extra-source-files: NEWS tests/Properties.hs cbits/feqrel_source.c
+
+flag big_endian
+  description: Build for a big endian machine.
+  default:     False
 
 library
     exposed-modules: Data.AEq
@@ -26,6 +30,15 @@ library
 
     build-depends:   base >= 3 && < 5
 
-    ghc-options:     -Wall
+    cc-options:      -DNDEBUG -O3
 
-    extensions:      CPP
+    if flag(big_endian)
+        cc-options:  -DBIG_ENDIAN
+
+    ghc-options:     -Wall
+    c-sources:       cbits/float.c cbits/double.c
+    include-dirs:    cbits
+    includes:        cbits/feqrel.h
+
+    extensions:      FlexibleInstances
+                     ForeignFunctionInterface
