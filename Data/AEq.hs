@@ -21,8 +21,23 @@ import Numeric.IEEE
 infix 4 ===, ~==
 
 class Eq a => AEq a where
-    -- | An exact equality comparison.  For 'IEEE' types, this considers
-    -- @NaN@ to be equivalent to @NaN@.
+    -- | An exact equality comparison.
+    --
+    -- For real 'IEEE' types, two values are equivalent in the
+    -- following cases:
+    --
+    --   * both values are @+0@;
+    --
+    --   * both values are @-0@;
+    --
+    --   * both values are nonzero and equal to each other
+    --     (according to '==');
+    --
+    --   * both values are @NaN@.
+    --
+    -- For complex 'IEEE' types, two values are equivalent if their
+    -- real and imaginary parts are equivalent.
+    --
     (===) :: a -> a -> Bool
     (===) = (==)
     {-# INLINE (===) #-}
@@ -53,8 +68,9 @@ class Eq a => AEq a where
     {-# INLINE (~==) #-}
 
 identicalIEEE :: (IEEE a) => a -> a -> Bool
-identicalIEEE x y =
-    (x == y) || (isNaN x && isNaN y)
+identicalIEEE x y | isNegativeZero x = isNegativeZero y
+                  | isNegativeZero y = isNegativeZero y
+                  | otherwise = (x == y) || (isNaN x && isNaN y)
 {-# INLINE identicalIEEE #-}
 
 approxEqIEEE :: (IEEE a) => a -> a -> Bool
