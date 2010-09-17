@@ -57,11 +57,11 @@ class Eq a => AEq a where
     -- followiing cases:
     --
     --   * their magnitudes are approximately equal and the angle between
-    --     them is less than @32*@'epsilon';
+    --     them is less than @32*'epsilon'@;
     --
     --   * both magnitudes are less than 'epsilon';
     --
-    --   * both have a NaN real or imaginary part.
+    --   * both have a @NaN@ real or imaginary part.
     --
     (~==) :: a -> a -> Bool
     (~==) = (==)
