@@ -149,6 +149,57 @@ test_predIEEE = testGroup "predIEEE"
 test_predIEEE_D = predIEEE (1 + epsilon) @?= (1 :: D)
 test_predIEEE_F = predIEEE (1 + epsilon) @?= (1 :: F)
 
+test_bisectIEEE = testGroup "bisectIEEE"
+    [ testCase "D1" test_bisectIEEE_D1
+    , testCase "D2" test_bisectIEEE_D2
+    , testCase "D3" test_bisectIEEE_D3
+    , testCase "D4" test_bisectIEEE_D4
+    , testCase "D5" test_bisectIEEE_D5            
+    , testCase "D6" test_bisectIEEE_D6            
+    , testCase "D7" test_bisectIEEE_D7                    
+    , testCase "D8" test_bisectIEEE_D8    
+    , testCase "D9" test_bisectIEEE_D9
+    , testCase "F1" test_bisectIEEE_F1
+    , testCase "F2" test_bisectIEEE_F2
+    , testCase "F3" test_bisectIEEE_F3
+    , testCase "F4" test_bisectIEEE_F4
+    , testCase "F5" test_bisectIEEE_F5            
+    , testCase "F6" test_bisectIEEE_F6            
+    , testCase "F7" test_bisectIEEE_F7                    
+    , testCase "F8" test_bisectIEEE_F8    
+    , testCase "F9" test_bisectIEEE_F9
+    ]
+
+test_bisectIEEE_D1 = bisectIEEE (-0) (-1e-20) < (0 :: D) @?= True
+test_bisectIEEE_D2 = bisectIEEE (0) (1e-20) > (0 :: D) @?= True
+test_bisectIEEE_D3 = bisectIEEE 1 4 @?= (2 :: D)
+test_bisectIEEE_D4 = bisectIEEE (2*1.013) (8*1.013) @?= (4*1.013 :: D)
+test_bisectIEEE_D5 = bisectIEEE (-1) (-4) @?= (-2 :: D)
+test_bisectIEEE_D6 = bisectIEEE (-1) (-2) @?= (-1.5 :: D)
+test_bisectIEEE_D7 =
+    bisectIEEE (-1*(1+8*epsilon)) (-2*(1+8*epsilon))
+        @?= (-1.5*(1+5*epsilon) :: D)
+test_bisectIEEE_D8 =
+    bisectIEEE (encodeFloat 0x100000 60) (encodeFloat 0x100000 (-10))
+        @?= (encodeFloat 0x100000 25 :: D)
+test_bisectIEEE_D9 =
+    bisectIEEE 0 infinity @?= (1.5 :: D)
+
+test_bisectIEEE_F1 = bisectIEEE (-0) (-1e-20) < (0 :: F) @?= True
+test_bisectIEEE_F2 = bisectIEEE (0) (1e-20) > (0 :: F) @?= True
+test_bisectIEEE_F3 = bisectIEEE 1 4 @?= (2 :: F)
+test_bisectIEEE_F4 = bisectIEEE (2*1.013) (8*1.013) @?= (4*1.013 :: F)
+test_bisectIEEE_F5 = bisectIEEE (-1) (-4) @?= (-2 :: F)
+test_bisectIEEE_F6 = bisectIEEE (-1) (-2) @?= (-1.5 :: F)
+test_bisectIEEE_F7 =
+    bisectIEEE (-1*(1+8*epsilon)) (-2*(1+8*epsilon))
+        @?= (-1.5*(1+5*epsilon) :: F)
+test_bisectIEEE_F8 =
+    bisectIEEE (encodeFloat 0x100000 60) (encodeFloat 0x100000 (-10))
+        @?= (encodeFloat 0x100000 25 :: F)
+test_bisectIEEE_F9 =
+    bisectIEEE 0 infinity @?= (1.5 :: F)
+
 
 test_sameSignificandBits = testGroup "sameSignificandBits" $
     [ testCase "exact D1" test_sameSignificandBits_exact_D1
@@ -405,6 +456,7 @@ test_IEEE = testGroup "IEEE"
     , test_infinity
     , test_succIEEE
     , test_predIEEE
+    , test_bisectIEEE
     , test_sameSignificandBits
     ]
 

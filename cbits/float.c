@@ -43,3 +43,21 @@ nextdownf (float x)
 {
     return -nextupf(-x);
 }
+
+/* ported from tango/math/IEEE.d */
+float
+ieeemeanf (float x, float y)
+{
+    if (!((x>=0 && y>=0) || (x<=0 && y<=0))) return NAN;
+    
+    float u;
+    
+    uint32_t *ul = (uint32_t *)&u;
+    uint32_t *xl = (uint32_t *)&x;
+    uint32_t *yl = (uint32_t *)&y;
+    uint32_t m = (((*xl) & 0x7FFFFFFF) + ((*yl) & 0x7FFFFFFF)) >> 1;
+    m |= ((*xl) & 0x80000000);
+    *ul = m;
+    
+    return u;
+}

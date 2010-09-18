@@ -10,7 +10,6 @@
 #define REAL_EPSILON     DBL_EPSILON
 #define REAL_MAX         DBL_MAX
 #define REAL_MANT_DIG    DBL_MANT_DIG
-#define REAL_NEGINF
 
 #define FEQREL           feqrel
 #include "feqrel_source.c"
@@ -43,4 +42,23 @@ double
 nextdown (double x)
 {
     return -nextup(-x);
+}
+
+/* ported from tango/math/IEEE.d */
+double
+ieeemean (double x, double y)
+{
+    if (!((x>=0 && y>=0) || (x<=0 && y<=0))) return NAN;
+    
+    double u;
+    
+    uint64_t *ul = (uint64_t *)&u;
+    uint64_t *xl = (uint64_t *)&x;
+    uint64_t *yl = (uint64_t *)&y;
+    uint64_t m = ( ((*xl) & 0x7FFFFFFFFFFFFFFFULL)
+                 + ((*yl) & 0x7FFFFFFFFFFFFFFFULL) ) >> 1;
+    m |= ((*xl) & 0x8000000000000000ULL);
+    *ul = m;
+    
+    return u;
 }

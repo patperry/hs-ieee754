@@ -38,6 +38,11 @@ class (RealFloat a) => IEEE a where
     -- unchanged).
     predIEEE :: a -> a
 
+    -- | Given two values with the same sign, return the value halfway
+    -- between two on the IEEE number line.  If the signs of the values
+    -- differ or either is @NaN@, the value is undefined.
+    bisectIEEE :: a -> a -> a
+
     -- | The number of significand bits which are equal in the two arguments
     -- (equivalent to @feqrel@ from the Tango Math library).  The result is
     -- between @0@ and @'floatDigits'@.
@@ -81,6 +86,8 @@ instance IEEE Float where
     {-# INLINE succIEEE #-}
     predIEEE = c_nextdownf
     {-# INLINE predIEEE #-}
+    bisectIEEE = c_ieeemeanf
+    {-# INLINE bisectIEEE #-}
     sameSignificandBits = c_feqrelf
     {-# INLINE sameSignificandBits #-}
     expm1 = c_expm1f
@@ -104,6 +111,8 @@ instance IEEE CFloat where
     {-# INLINE succIEEE #-}
     predIEEE x = realToFrac $ c_nextdownf (realToFrac x)
     {-# INLINE predIEEE #-}
+    bisectIEEE x y = realToFrac $ c_ieeemeanf (realToFrac x) (realToFrac y)
+    {-# INLINE bisectIEEE #-}
     sameSignificandBits x y = c_feqrelf (realToFrac x) (realToFrac y)
     {-# INLINE sameSignificandBits #-}
     expm1 x = realToFrac $ c_expm1f (realToFrac x)
@@ -126,6 +135,8 @@ instance IEEE Double where
     {-# INLINE succIEEE #-}
     predIEEE = c_nextdown
     {-# INLINE predIEEE #-}
+    bisectIEEE = c_ieeemean
+    {-# INLINE bisectIEEE #-}
     sameSignificandBits = c_feqrel
     {-# INLINE sameSignificandBits #-}
     expm1 = c_expm1
@@ -148,6 +159,8 @@ instance IEEE CDouble where
     {-# INLINE succIEEE #-}
     predIEEE x = realToFrac $ c_nextdown (realToFrac x)
     {-# INLINE predIEEE #-}
+    bisectIEEE x y = realToFrac $ c_ieeemean (realToFrac x) (realToFrac y)
+    {-# INLINE bisectIEEE #-}
     sameSignificandBits x y = c_feqrel (realToFrac x) (realToFrac y)
     {-# INLINE sameSignificandBits #-}
     expm1 x = realToFrac $ c_expm1 (realToFrac x)
@@ -171,6 +184,12 @@ foreign import ccall unsafe "nextdown"
 
 foreign import ccall unsafe "nextdownf"
     c_nextdownf :: Float -> Float
+
+foreign import ccall unsafe "ieeemean"
+    c_ieeemean :: Double -> Double -> Double
+
+foreign import ccall unsafe "ieeemeanf"
+    c_ieeemeanf :: Float -> Float -> Float
 
 foreign import ccall unsafe "expm1"
     c_expm1 :: Double -> Double
