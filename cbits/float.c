@@ -14,6 +14,7 @@
 #define FEQREL           feqrelf
 #include "feqrel_source.c"
 
+/* ported from tango/math/IEEE.d */
 float
 nextupf (float x)
 {
@@ -36,6 +37,7 @@ nextupf (float x)
     return x;
 }
 
+/* ported from tango/math/IEEE.d */
 float
 nextdownf (float x)
 {

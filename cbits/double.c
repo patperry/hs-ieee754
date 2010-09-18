@@ -15,6 +15,7 @@
 #define FEQREL           feqrel
 #include "feqrel_source.c"
 
+/* ported from tango/math/IEEE.d */
 double
 nextup (double x)
 {
@@ -37,6 +38,7 @@ nextup (double x)
     return x;
 }
 
+/* ported from tango/math/IEEE.d */
 double
 nextdown (double x)
 {

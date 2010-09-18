@@ -77,7 +77,7 @@ test_infinity_D2 = infinity > (0 :: D) @?= True
 test_infinity_F1 = isInfinite (infinity :: F) @?= True
 test_infinity_F2 = infinity > (0 :: F) @?= True
 
-
+-- succIEEE and predIEEE tests ported from tango/math/IEEE.d
 test_succIEEE = testGroup "succIEEE"
     [ testCase "nan D" test_succIEEE_nan_D
     , testCase "neg D1" test_succIEEE_neg_D1
