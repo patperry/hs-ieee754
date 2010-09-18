@@ -30,6 +30,14 @@ class (RealFloat a) => IEEE a where
     -- | The smallest positive floating-point number @x@ such that @1 + x /= 1@.
     epsilon :: a
 
+    -- | Return the next largest IEEE value (@Infinity@ and @NaN@ are
+    -- unchanged).
+    succIEEE :: a -> a
+
+    -- | Return the next smallest IEEE value (@-Infinity@ and @NaN@ are
+    -- unchanged).
+    predIEEE :: a -> a
+
     -- | The number of significand bits which are equal in the two arguments
     -- (ported from the Tango math library for D).  The result is between
     -- @0@ and @floatDigits@.
@@ -56,7 +64,7 @@ class (RealFloat a) => IEEE a where
     minNum x y | isNaN y   = x
                | otherwise = min x y
     {-# INLINE minNum #-}
-
+    
 
 instance IEEE Float where
     infinity = 1/0
@@ -69,6 +77,10 @@ instance IEEE Float where
     {-# INLINE maxFinite #-}
     epsilon = 1.19209290e-07
     {-# INLINE epsilon #-}
+    succIEEE = c_nextupf
+    {-# INLINE succIEEE #-}
+    predIEEE = c_nextdownf
+    {-# INLINE predIEEE #-}
     feqrel = c_feqrelf
     {-# INLINE feqrel #-}
     expm1 = c_expm1f
@@ -88,6 +100,10 @@ instance IEEE CFloat where
     {-# INLINE maxFinite #-}
     epsilon = 1.19209290e-07
     {-# INLINE epsilon #-}
+    succIEEE x = realToFrac $ c_nextupf (realToFrac x)
+    {-# INLINE succIEEE #-}
+    predIEEE x = realToFrac $ c_nextdownf (realToFrac x)
+    {-# INLINE predIEEE #-}
     feqrel x y = c_feqrelf (realToFrac x) (realToFrac y)
     {-# INLINE feqrel #-}
     expm1 x = realToFrac $ c_expm1f (realToFrac x)
@@ -106,6 +122,10 @@ instance IEEE Double where
     {-# INLINE maxFinite #-}
     epsilon = 2.2204460492503131e-16
     {-# INLINE epsilon #-}
+    succIEEE = c_nextup
+    {-# INLINE succIEEE #-}
+    predIEEE = c_nextdown
+    {-# INLINE predIEEE #-}
     feqrel = c_feqrel
     {-# INLINE feqrel #-}
     expm1 = c_expm1
@@ -124,6 +144,10 @@ instance IEEE CDouble where
     {-# INLINE maxFinite #-}
     epsilon = 2.2204460492503131e-16
     {-# INLINE epsilon #-}
+    succIEEE x = realToFrac $ c_nextup (realToFrac x)
+    {-# INLINE succIEEE #-}
+    predIEEE x = realToFrac $ c_nextdown (realToFrac x)
+    {-# INLINE predIEEE #-}
     feqrel x y = c_feqrel (realToFrac x) (realToFrac y)
     {-# INLINE feqrel #-}
     expm1 x = realToFrac $ c_expm1 (realToFrac x)
@@ -131,17 +155,29 @@ instance IEEE CDouble where
     log1p x = realToFrac $ c_log1p (realToFrac x)
     {-# INLINE log1p #-}
 
-foreign import ccall unsafe "feqrel.h feqrel"
+foreign import ccall unsafe "feqrel"
     c_feqrel :: Double -> Double -> Int
-foreign import ccall unsafe "feqrel.h feqrelf"
+foreign import ccall unsafe "feqrelf"
     c_feqrelf :: Float -> Float -> Int
 
-foreign import ccall unsafe "math.h expm1"
+foreign import ccall unsafe "nextup"
+    c_nextup :: Double -> Double
+
+foreign import ccall unsafe "nextupf"
+    c_nextupf :: Float -> Float
+
+foreign import ccall unsafe "nextdown"
+    c_nextdown :: Double -> Double
+
+foreign import ccall unsafe "nextdownf"
+    c_nextdownf :: Float -> Float
+
+foreign import ccall unsafe "expm1"
     c_expm1 :: Double -> Double
-foreign import ccall unsafe "math.h expm1f"
+foreign import ccall unsafe "expm1f"
     c_expm1f :: Float -> Float
 
-foreign import ccall unsafe "math.h log1p"
+foreign import ccall unsafe "log1p"
     c_log1p :: Double -> Double
-foreign import ccall unsafe "math.h log1p"
+foreign import ccall unsafe "log1p"
     c_log1pf :: Float -> Float
