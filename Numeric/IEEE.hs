@@ -39,9 +39,9 @@ class (RealFloat a) => IEEE a where
     predIEEE :: a -> a
 
     -- | The number of significand bits which are equal in the two arguments
-    -- (ported from the Tango math library for D).  The result is between
-    -- @0@ and @floatDigits@.
-    feqrel :: a -> a -> Int
+    -- (equivalent to @feqrel@ from the Tango Math library).  The result is
+    -- between @0@ and @'floatDigits'@.
+    sameSignificandBits :: a -> a -> Int
     
     -- | Logically equivalent to @exp x - 1@, but more accurate for small
     -- @x@.
@@ -81,8 +81,8 @@ instance IEEE Float where
     {-# INLINE succIEEE #-}
     predIEEE = c_nextdownf
     {-# INLINE predIEEE #-}
-    feqrel = c_feqrelf
-    {-# INLINE feqrel #-}
+    sameSignificandBits = c_feqrelf
+    {-# INLINE sameSignificandBits #-}
     expm1 = c_expm1f
     {-# INLINE expm1 #-}
     log1p = c_log1pf
@@ -104,8 +104,8 @@ instance IEEE CFloat where
     {-# INLINE succIEEE #-}
     predIEEE x = realToFrac $ c_nextdownf (realToFrac x)
     {-# INLINE predIEEE #-}
-    feqrel x y = c_feqrelf (realToFrac x) (realToFrac y)
-    {-# INLINE feqrel #-}
+    sameSignificandBits x y = c_feqrelf (realToFrac x) (realToFrac y)
+    {-# INLINE sameSignificandBits #-}
     expm1 x = realToFrac $ c_expm1f (realToFrac x)
     {-# INLINE expm1 #-}
     log1p x = realToFrac $ c_log1pf (realToFrac x)
@@ -126,8 +126,8 @@ instance IEEE Double where
     {-# INLINE succIEEE #-}
     predIEEE = c_nextdown
     {-# INLINE predIEEE #-}
-    feqrel = c_feqrel
-    {-# INLINE feqrel #-}
+    sameSignificandBits = c_feqrel
+    {-# INLINE sameSignificandBits #-}
     expm1 = c_expm1
     {-# INLINE expm1 #-}
     log1p = c_log1p
@@ -148,8 +148,8 @@ instance IEEE CDouble where
     {-# INLINE succIEEE #-}
     predIEEE x = realToFrac $ c_nextdown (realToFrac x)
     {-# INLINE predIEEE #-}
-    feqrel x y = c_feqrel (realToFrac x) (realToFrac y)
-    {-# INLINE feqrel #-}
+    sameSignificandBits x y = c_feqrel (realToFrac x) (realToFrac y)
+    {-# INLINE sameSignificandBits #-}
     expm1 x = realToFrac $ c_expm1 (realToFrac x)
     {-# INLINE expm1 #-}
     log1p x = realToFrac $ c_log1p (realToFrac x)

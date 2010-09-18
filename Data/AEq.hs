@@ -75,7 +75,7 @@ identicalIEEE x y | isNegativeZero x = isNegativeZero y
 
 approxEqIEEE :: (IEEE a) => a -> a -> Bool
 approxEqIEEE x y =
-    ( feqrel x y >= d
+    ( sameSignificandBits x y >= d
     || (x < epsilon && y < epsilon)
     || (isNaN x && isNaN y)
     )
