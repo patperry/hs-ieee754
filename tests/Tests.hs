@@ -596,10 +596,52 @@ test_nanPayload_F3 =
   where
     maxPayload = maxNaNPayload (undefined :: F)
 
+test_copySign = testGroup "copySign"
+    [ testCase "D1" test_copySign_D1
+    , testCase "D2" test_copySign_D2
+    , testCase "D3" test_copySign_D3    
+    , testCase "D4" test_copySign_D4    
+    , testCase "D5" test_copySign_D5    
+    , testCase "D6" test_copySign_D6                    
+    , testCase "F1" test_copySign_F1
+    , testCase "F2" test_copySign_F2
+    , testCase "F3" test_copySign_F3    
+    , testCase "F4" test_copySign_F4    
+    , testCase "F5" test_copySign_F5    
+    , testCase "F6" test_copySign_F6                    
+    ]
+
+test_copySign_D1 =
+    copySign 0.9 (-1.2) @?= (-0.9 :: D)
+test_copySign_D2 =
+    copySign 0.9 (1.2) @?= (0.9 :: D)
+test_copySign_D3 =
+    copySign (-0.9 )(1.2) @?= (0.9 :: D)
+test_copySign_D4 =
+    copySign (-0.9) (-1.2) @?= (-0.9 :: D)
+test_copySign_D5 =
+    copySign 1 (copySign nan 1) @?= (1 :: D)
+test_copySign_D6 =
+    copySign 1 (copySign nan (-1)) @?= (-1 :: D)
+
+test_copySign_F1 =
+    copySign 0.9 (-1.2) @?= (-0.9 :: F)
+test_copySign_F2 =
+    copySign 0.9 (1.2) @?= (0.9 :: F)
+test_copySign_F3 =
+    copySign (-0.9 )(1.2) @?= (0.9 :: F)
+test_copySign_F4 =
+    copySign (-0.9) (-1.2) @?= (-0.9 :: F)
+test_copySign_F5 =
+    copySign 1 (copySign nan 1) @?= (1 :: F)
+test_copySign_F6 =
+    copySign 1 (copySign nan (-1)) @?= (-1 :: F)
+
 
 
 test_IEEE = testGroup "IEEE"
     [ test_infinity
+    , test_copySign
     , test_succIEEE
     , test_predIEEE
     , test_bisectIEEE

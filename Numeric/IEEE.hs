@@ -110,7 +110,7 @@ instance IEEE Float where
     {-# INLINE identicalIEEE #-}
     infinity = 1/0
     {-# INLINE infinity #-}
-    nan = 0/0
+    nan = (0/0)
     {-# INLINE nan #-}
     nanWithPayload n = c_mknanf (fromIntegral n)
     {-# INLINE nanWithPayload #-}
@@ -141,7 +141,7 @@ instance IEEE CFloat where
     {-# INLINE identicalIEEE #-}
     infinity = 1/0
     {-# INLINE infinity #-}
-    nan = 0/0
+    nan = (0/0)
     {-# INLINE nan #-}
     nanWithPayload n = realToFrac $ c_mknanf (fromIntegral n)
     {-# INLINE nanWithPayload #-}
@@ -172,7 +172,7 @@ instance IEEE Double where
     {-# INLINE identicalIEEE #-}
     infinity = 1/0
     {-# INLINE infinity #-}
-    nan = 0/0
+    nan = (0/0)
     {-# INLINE nan #-}
     nanWithPayload n = c_mknan n
     {-# INLINE nanWithPayload #-}
@@ -203,7 +203,7 @@ instance IEEE CDouble where
     {-# INLINE identicalIEEE #-}
     infinity = 1/0
     {-# INLINE infinity #-}
-    nan = 0/0
+    nan = (0/0)
     {-# INLINE nan #-}
     nanWithPayload n = realToFrac $ c_mknan n
     {-# INLINE nanWithPayload #-}
