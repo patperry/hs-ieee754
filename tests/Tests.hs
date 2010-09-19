@@ -31,21 +31,28 @@ test_maxNum = testGroup "maxNum"
     , testCase "D2" test_maxNum_D2
     , testCase "D3" test_maxNum_D3
     , testCase "D4" test_maxNum_D4
+    , testCase "D5" test_maxNum_D5    
     , testCase "F1" test_maxNum_F1
     , testCase "F2" test_maxNum_F2
     , testCase "F3" test_maxNum_F3
     , testCase "F4" test_maxNum_F4
+    , testCase "F5" test_maxNum_F5    
     ]
 
 test_maxNum_D1 = maxNum nan 1 @?= (1 :: D)
 test_maxNum_D2 = maxNum 1 nan @?= (1 :: D)
 test_maxNum_D3 = maxNum 1 0   @?= (1 :: D)
 test_maxNum_D4 = maxNum 0 1   @?= (1 :: D)
-
+test_maxNum_D5 =
+    maxNum (nanWithPayload 1) (nanWithPayload 2)
+        @?== (nanWithPayload 1 :: D)
 test_maxNum_F1 = maxNum nan 1 @?= (1 :: F)
 test_maxNum_F2 = maxNum 1 nan @?= (1 :: F)
 test_maxNum_F3 = maxNum 1 0   @?= (1 :: F)
 test_maxNum_F4 = maxNum 0 1   @?= (1 :: F)
+test_maxNum_F5 =
+    maxNum (nanWithPayload 1) (nanWithPayload 2)
+        @?== (nanWithPayload 1 :: F)
 
 
 test_minNum = testGroup "minNum"
@@ -53,21 +60,90 @@ test_minNum = testGroup "minNum"
     , testCase "D2" test_minNum_D2
     , testCase "D3" test_minNum_D3
     , testCase "D4" test_minNum_D4
+    , testCase "D5" test_minNum_D5    
     , testCase "F1" test_minNum_F1
     , testCase "F2" test_minNum_F2
     , testCase "F3" test_minNum_F3
     , testCase "F4" test_minNum_F4
+    , testCase "F5" test_minNum_F5    
     ]
 
 test_minNum_D1 = minNum nan 1 @?= (1 :: D)
 test_minNum_D2 = minNum 1 nan @?= (1 :: D)
 test_minNum_D3 = minNum 1 2   @?= (1 :: D)
 test_minNum_D4 = minNum 2 1   @?= (1 :: D)
-
+test_minNum_D5 =
+    minNum (nanWithPayload 1) (nanWithPayload 2)
+        @?== (nanWithPayload 1 :: D)
 test_minNum_F1 = minNum nan 1 @?= (1 :: F)
 test_minNum_F2 = minNum 1 nan @?= (1 :: F)
 test_minNum_F3 = minNum 1 2   @?= (1 :: F)
 test_minNum_F4 = minNum 2 1   @?= (1 :: F)
+test_minNum_F5 =
+    minNum (nanWithPayload 1) (nanWithPayload 2)
+        @?== (nanWithPayload 1 :: F)
+
+
+
+test_maxNaN = testGroup "maxNaN"
+    [ testCase "D1" test_maxNaN_D1
+    , testCase "D2" test_maxNaN_D2
+    , testCase "D3" test_maxNaN_D3
+    , testCase "D4" test_maxNaN_D4
+    , testCase "D5" test_maxNaN_D5    
+    , testCase "F1" test_maxNaN_F1
+    , testCase "F2" test_maxNaN_F2
+    , testCase "F3" test_maxNaN_F3
+    , testCase "F4" test_maxNaN_F4
+    , testCase "F5" test_maxNaN_F5    
+    ]
+
+test_maxNaN_D1 = maxNaN nan 1 @?== (nan :: D)
+test_maxNaN_D2 = maxNaN 1 nan @?== (nan :: D)
+test_maxNaN_D3 = maxNaN 1 0   @?== (1 :: D)
+test_maxNaN_D4 = maxNaN 0 1   @?== (1 :: D)
+test_maxNaN_D5 =
+    maxNaN (nanWithPayload 1) (nanWithPayload 2)
+        @?== (nanWithPayload 1 :: D)
+test_maxNaN_F1 = maxNaN nan 1 @?== (nan :: F)
+test_maxNaN_F2 = maxNaN 1 nan @?== (nan :: F)
+test_maxNaN_F3 = maxNaN 1 0   @?== (1 :: F)
+test_maxNaN_F4 = maxNaN 0 1   @?== (1 :: F)
+test_maxNaN_F5 =
+    maxNaN (nanWithPayload 1) (nanWithPayload 2)
+        @?== (nanWithPayload 1 :: F)
+
+
+
+test_minNaN = testGroup "minNaN"
+    [ testCase "D1" test_minNaN_D1
+    , testCase "D2" test_minNaN_D2
+    , testCase "D3" test_minNaN_D3
+    , testCase "D4" test_minNaN_D4
+    , testCase "D5" test_minNaN_D5    
+    , testCase "F1" test_minNaN_F1
+    , testCase "F2" test_minNaN_F2
+    , testCase "F3" test_minNaN_F3
+    , testCase "F4" test_minNaN_F4
+    , testCase "F5" test_minNaN_F5    
+    ]
+
+test_minNaN_D1 = minNaN nan 1 @?== (nan :: D)
+test_minNaN_D2 = minNaN 1 nan @?== (nan :: D)
+test_minNaN_D3 = minNaN 1 2   @?== (1 :: D)
+test_minNaN_D4 = minNaN 2 1   @?== (1 :: D)
+test_minNaN_D5 =
+    minNaN (nanWithPayload 1) (nanWithPayload 2)
+        @?== (nanWithPayload 1 :: D)
+test_minNaN_F1 = minNaN nan 1 @?== (nan :: F)
+test_minNaN_F2 = minNaN 1 nan @?== (nan :: F)
+test_minNaN_F3 = minNaN 1 2   @?== (1 :: F)
+test_minNaN_F4 = minNaN 2 1   @?== (1 :: F)
+test_minNaN_F5 =
+    minNaN (nanWithPayload 1) (nanWithPayload 2)
+        @?== (nanWithPayload 1 :: F)
+
+
 
 
 test_nan = testGroup "nan" $
@@ -559,16 +635,18 @@ test_nanPayload_F3 =
 
 
 test_IEEE = testGroup "IEEE"
-    [ test_maxNum
-    , test_minNum
-    , test_nan
-    , test_infinity
+    [ test_infinity
     , test_succIEEE
     , test_predIEEE
     , test_bisectIEEE
     , test_sameSignificandBits
     , test_expm1
     , test_log1p
+    , test_maxNum
+    , test_minNum
+    , test_maxNaN
+    , test_minNaN
+    , test_nan
     , test_nanWithPayload
     , test_nanPayload
     ]

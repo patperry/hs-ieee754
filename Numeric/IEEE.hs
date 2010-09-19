@@ -57,16 +57,28 @@ class (RealFloat a) => IEEE a where
     -- | Return the maximum of two values; if one value is @NaN@, return the
     -- other.
     maxNum :: a -> a -> a
-    maxNum x y | isNaN x   = y
-               | otherwise = max x y
+    maxNum x y | x >= y || isNaN y = x
+               | otherwise         = y
     {-# INLINE maxNum #-}
 
     -- | Return the minimum of two values; if one value is @NaN@, return the
     -- other.
     minNum :: a -> a -> a
-    minNum x y | isNaN y   = x
-               | otherwise = min x y
+    minNum x y | x <= y || isNaN y = x
+               | otherwise         = y
     {-# INLINE minNum #-}
+
+    -- | Return the maximum of two values; if one value is @NaN@, return it.
+    maxNaN :: a -> a -> a
+    maxNaN x y | x >= y || isNaN x = x
+               | otherwise         = y
+    {-# INLINE maxNaN #-}
+
+    -- | Return the minimum of two values; if one value is @NaN@, return it.
+    minNaN :: a -> a -> a
+    minNaN x y | x <= y || isNaN x = x
+               | otherwise         = y
+    {-# INLINE minNaN #-}
 
     -- | Default @NaN@ value.
     nan :: a
