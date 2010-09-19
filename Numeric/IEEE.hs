@@ -37,7 +37,7 @@ class (RealFloat a) => IEEE a where
     predIEEE :: a -> a
 
     -- | Given two values with the same sign, return the value halfway
-    -- between two on the IEEE number line.  If the signs of the values
+    -- between them on the IEEE number line.  If the signs of the values
     -- differ or either is @NaN@, the value is undefined.
     bisectIEEE :: a -> a -> a
 
