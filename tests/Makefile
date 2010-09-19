@@ -1,12 +1,12 @@
 all:
-	ghc -O ../cbits/double.c ../cbits/float.c \
+	ghc -O ../cbits/double.c ../cbits/float.c -lm \
 	    -i. -i.. Tests.hs --make -o test-ieee
 	./test-ieee
 
 hpc:
-	ghc -fforce-recomp ../cbits/double.c ../cbits/float.c \
+	ghc -fforce-recomp ../cbits/double.c ../cbits/float.c -lm \
 	    -i. -i.. -fhpc --make Tests.hs -o test-ieee
-	rm -f test-mc.tix
+	rm -f test-ieee.tix
 	./test-ieee
 	hpc markup test-ieee
 
