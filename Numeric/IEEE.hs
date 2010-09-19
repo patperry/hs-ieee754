@@ -235,7 +235,7 @@ foreign import ccall unsafe "expm1f"
 
 foreign import ccall unsafe "log1p"
     c_log1p :: Double -> Double
-foreign import ccall unsafe "log1p"
+foreign import ccall unsafe "log1pf"
     c_log1pf :: Float -> Float
 
 foreign import ccall unsafe "mknan"
