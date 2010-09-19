@@ -14,6 +14,14 @@
 #define FEQREL           feqrel
 #include "feqrel_source.c"
 
+int
+identical (double x, double y)
+{
+    uint64_t *ux = (uint64_t *)(&x);
+    uint64_t *uy = (uint64_t *)(&y);
+    return *ux == *uy;
+}
+
 /* ported from tango/math/IEEE.d */
 double
 nextup (double x)

@@ -14,6 +14,14 @@
 #define FEQREL           feqrelf
 #include "feqrel_source.c"
 
+int
+identicalf (float x, float y)
+{
+    uint32_t *ux = (uint32_t *)(&x);
+    uint32_t *uy = (uint32_t *)(&y);
+    return *ux == *uy;
+}
+
 /* ported from tango/math/IEEE.d */
 float
 nextupf (float x)

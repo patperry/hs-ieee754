@@ -33,7 +33,7 @@ class Eq a => AEq a where
     --   * both values are nonzero and equal to each other
     --     (according to '==');
     --
-    --   * both values are @NaN@ with the same payload.
+    --   * both values are @NaN@ with the same payload and sign.
     --
     -- For complex 'IEEE' types, two values are equivalent if their
     -- real and imaginary parts are equivalent.
@@ -66,13 +66,6 @@ class Eq a => AEq a where
     (~==) :: a -> a -> Bool
     (~==) = (==)
     {-# INLINE (~==) #-}
-
-identicalIEEE :: (IEEE a) => a -> a -> Bool
-identicalIEEE x y | isNegativeZero x = isNegativeZero y
-                  | isNegativeZero y = isNegativeZero y
-                  | isNaN x = isNaN y && nanPayload x == nanPayload y
-                  | otherwise = x == y
-{-# INLINE identicalIEEE #-}
 
 approxEqIEEE :: (IEEE a) => a -> a -> Bool
 approxEqIEEE x y =

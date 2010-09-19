@@ -28,6 +28,12 @@ class (RealFloat a) => IEEE a where
     -- | The smallest positive floating-point number @x@ such that @1 + x /= 1@.
     epsilon :: a
 
+    -- | @copySign x y@ returns @x@ with its sign changed to @y@'s.
+    copySign :: a -> a -> a
+
+    -- | Return true if two values are /exactly/ (bitwise) equal.
+    identicalIEEE :: a -> a -> Bool
+
     -- | Return the next largest IEEE value (@Infinity@ and @NaN@ are
     -- unchanged).
     succIEEE :: a -> a
@@ -97,6 +103,8 @@ class (RealFloat a) => IEEE a where
 
 
 instance IEEE Float where
+    identicalIEEE x y = c_identicalf x y /= 0
+    {-# INLINE identicalIEEE #-}
     infinity = 1/0
     {-# INLINE infinity #-}
     nan = 0/0
@@ -113,6 +121,8 @@ instance IEEE Float where
     {-# INLINE maxFinite #-}
     epsilon = 1.19209290e-07
     {-# INLINE epsilon #-}
+    copySign = c_copysignf
+    {-# INLINE copySign #-}
     succIEEE = c_nextupf
     {-# INLINE succIEEE #-}
     predIEEE = c_nextdownf
@@ -128,6 +138,8 @@ instance IEEE Float where
 
 
 instance IEEE CFloat where
+    identicalIEEE x y = c_identicalf (realToFrac x) (realToFrac y) /= 0
+    {-# INLINE identicalIEEE #-}
     infinity = 1/0
     {-# INLINE infinity #-}
     nan = 0/0
@@ -144,6 +156,8 @@ instance IEEE CFloat where
     {-# INLINE maxFinite #-}
     epsilon = 1.19209290e-07
     {-# INLINE epsilon #-}
+    copySign x y = realToFrac $ c_copysignf (realToFrac x) (realToFrac y)
+    {-# INLINE copySign #-}
     succIEEE x = realToFrac $ c_nextupf (realToFrac x)
     {-# INLINE succIEEE #-}
     predIEEE x = realToFrac $ c_nextdownf (realToFrac x)
@@ -158,6 +172,8 @@ instance IEEE CFloat where
     {-# INLINE log1p #-}
 
 instance IEEE Double where
+    identicalIEEE x y = c_identical x y /= 0
+    {-# INLINE identicalIEEE #-}
     infinity = 1/0
     {-# INLINE infinity #-}
     nan = 0/0
@@ -174,6 +190,8 @@ instance IEEE Double where
     {-# INLINE maxFinite #-}
     epsilon = 2.2204460492503131e-16
     {-# INLINE epsilon #-}
+    copySign = c_copysign
+    {-# INLINE copySign #-}
     succIEEE = c_nextup
     {-# INLINE succIEEE #-}
     predIEEE = c_nextdown
@@ -188,6 +206,8 @@ instance IEEE Double where
     {-# INLINE log1p #-}
 
 instance IEEE CDouble where
+    identicalIEEE x y = c_identical (realToFrac x) (realToFrac y) /= 0
+    {-# INLINE identicalIEEE #-}
     infinity = 1/0
     {-# INLINE infinity #-}
     nan = 0/0
@@ -206,6 +226,8 @@ instance IEEE CDouble where
     {-# INLINE epsilon #-}
     succIEEE x = realToFrac $ c_nextup (realToFrac x)
     {-# INLINE succIEEE #-}
+    copySign x y = realToFrac $ c_copysign (realToFrac x) (realToFrac y)
+    {-# INLINE copySign #-}
     predIEEE x = realToFrac $ c_nextdown (realToFrac x)
     {-# INLINE predIEEE #-}
     bisectIEEE x y = realToFrac $ c_ieeemean (realToFrac x) (realToFrac y)
@@ -216,6 +238,12 @@ instance IEEE CDouble where
     {-# INLINE expm1 #-}
     log1p x = realToFrac $ c_log1p (realToFrac x)
     {-# INLINE log1p #-}
+
+foreign import ccall unsafe "identical"
+    c_identical :: Double -> Double -> Int
+
+foreign import ccall unsafe "identicalf"
+    c_identicalf :: Float -> Float -> Int
 
 foreign import ccall unsafe "feqrel"
     c_feqrel :: Double -> Double -> Int
@@ -239,6 +267,12 @@ foreign import ccall unsafe "ieeemean"
 
 foreign import ccall unsafe "ieeemeanf"
     c_ieeemeanf :: Float -> Float -> Float
+
+foreign import ccall unsafe "copysign"
+    c_copysign :: Double -> Double -> Double
+
+foreign import ccall unsafe "copysignf"
+    c_copysignf :: Float -> Float -> Float
 
 foreign import ccall unsafe "expm1"
     c_expm1 :: Double -> Double
