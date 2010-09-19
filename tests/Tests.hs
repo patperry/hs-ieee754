@@ -536,42 +536,6 @@ test_sameSignificandBits_extreme_F5 =
 test_sameSignificandBits_extreme_F6 =
     sameSignificandBits (maxFinite) (-maxFinite :: F) @?= 0
 
-test_expm1 = testGroup "expm1"
-    [ testCase "D1" test_expm1_D1
-    , testCase "D2" test_expm1_D2
-    , testCase "D3" test_expm1_D3    
-    , testCase "F1" test_expm1_F1
-    , testCase "F2" test_expm1_F2
-    , testCase "F3" test_expm1_F3    
-    ]
-
-test_expm1_D1 = expm1 (-infinity) @?= (-1 :: D)
-test_expm1_D2 = expm1 0 @?= (0 :: D)
-test_expm1_D3 = expm1 1 @?~= (exp 1 - 1 :: D)
-test_expm1_F1 = expm1 (-infinity) @?= (-1 :: F)
-test_expm1_F2 = expm1 0 @?= (0 :: F)
-test_expm1_F3 = expm1 1 @?~= (exp 1 - 1 :: F)
-
-
-test_log1p = testGroup "log1p"
-    [ testCase "D1" test_log1p_D1
-    , testCase "D2" test_log1p_D2
-    , testCase "D3" test_log1p_D3    
-    , testCase "F1" test_log1p_F1
-    , testCase "F2" test_log1p_F2
-    , testCase "F3" test_log1p_F3    
-    ]
-
-test_log1p_D1 = log1p (-1) @?= (-infinity :: D)
-test_log1p_D2 = log1p 0 @?= (0 :: D)
-test_log1p_D3 = log1p (exp 1 - 1)@?~= (1 :: D)
-test_log1p_F1 = log1p (-1) @?= (-infinity :: F)
-test_log1p_F2 = log1p 0 @?= (0 :: F)
-test_log1p_F3 = log1p (exp 1 - 1)@?~= (1 :: F)
-
-
-
-
 
 test_nanWithPayload = testGroup "nanWithPayload"
     [ testCase "D1" test_nanWithPayload_D1
@@ -640,8 +604,6 @@ test_IEEE = testGroup "IEEE"
     , test_predIEEE
     , test_bisectIEEE
     , test_sameSignificandBits
-    , test_expm1
-    , test_log1p
     , test_maxNum
     , test_minNum
     , test_maxNaN

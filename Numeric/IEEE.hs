@@ -52,14 +52,6 @@ class (RealFloat a) => IEEE a where
     -- between @0@ and @'floatDigits'@.
     sameSignificandBits :: a -> a -> Int
 
-    -- | Logically equivalent to @exp x - 1@, but more accurate for small
-    -- @x@.
-    expm1 :: a -> a
-
-    -- | Logically equivalent to @log (1 + x)@, but more accurate for small
-    -- @x@.
-    log1p :: a -> a
-
     -- | Return the maximum of two values; if one value is @NaN@, return the
     -- other.
     maxNum :: a -> a -> a
@@ -131,10 +123,6 @@ instance IEEE Float where
     {-# INLINE bisectIEEE #-}
     sameSignificandBits = c_feqrelf
     {-# INLINE sameSignificandBits #-}
-    expm1 = c_expm1f
-    {-# INLINE expm1 #-}
-    log1p = c_log1pf
-    {-# INLINE log1p #-}
 
 
 instance IEEE CFloat where
@@ -166,10 +154,7 @@ instance IEEE CFloat where
     {-# INLINE bisectIEEE #-}
     sameSignificandBits x y = c_feqrelf (realToFrac x) (realToFrac y)
     {-# INLINE sameSignificandBits #-}
-    expm1 x = realToFrac $ c_expm1f (realToFrac x)
-    {-# INLINE expm1 #-}
-    log1p x = realToFrac $ c_log1pf (realToFrac x)
-    {-# INLINE log1p #-}
+
 
 instance IEEE Double where
     identicalIEEE x y = c_identical x y /= 0
@@ -200,10 +185,7 @@ instance IEEE Double where
     {-# INLINE bisectIEEE #-}
     sameSignificandBits = c_feqrel
     {-# INLINE sameSignificandBits #-}
-    expm1 = c_expm1
-    {-# INLINE expm1 #-}
-    log1p = c_log1p
-    {-# INLINE log1p #-}
+
 
 instance IEEE CDouble where
     identicalIEEE x y = c_identical (realToFrac x) (realToFrac y) /= 0
@@ -234,10 +216,7 @@ instance IEEE CDouble where
     {-# INLINE bisectIEEE #-}
     sameSignificandBits x y = c_feqrel (realToFrac x) (realToFrac y)
     {-# INLINE sameSignificandBits #-}
-    expm1 x = realToFrac $ c_expm1 (realToFrac x)
-    {-# INLINE expm1 #-}
-    log1p x = realToFrac $ c_log1p (realToFrac x)
-    {-# INLINE log1p #-}
+
 
 foreign import ccall unsafe "identical"
     c_identical :: Double -> Double -> Int
@@ -273,16 +252,6 @@ foreign import ccall unsafe "copysign"
 
 foreign import ccall unsafe "copysignf"
     c_copysignf :: Float -> Float -> Float
-
-foreign import ccall unsafe "expm1"
-    c_expm1 :: Double -> Double
-foreign import ccall unsafe "expm1f"
-    c_expm1f :: Float -> Float
-
-foreign import ccall unsafe "log1p"
-    c_log1p :: Double -> Double
-foreign import ccall unsafe "log1pf"
-    c_log1pf :: Float -> Float
 
 foreign import ccall unsafe "mknan"
     c_mknan :: Word64 -> Double
