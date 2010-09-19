@@ -20,6 +20,7 @@ import Numeric.IEEE
 
 infix 4 ===, ~==
 
+-- | Types with approximate and exact equality comparisons.
 class Eq a => AEq a where
     -- | An exact equality comparison.
     --
@@ -62,6 +63,9 @@ class Eq a => AEq a where
     --   * both magnitudes are less than 'epsilon';
     --
     --   * both have a @NaN@ real or imaginary part.
+    --
+    -- Admitedly, the @32@ is a bit of a hack.  Future versions of the
+    -- library may switch to a more principled test of the angle.
     --
     (~==) :: a -> a -> Bool
     (~==) = (==)

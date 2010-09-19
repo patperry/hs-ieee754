@@ -7,31 +7,39 @@
 -- Maintainer : Patrick Perry <patperry@gmail.com>
 -- Stability  : experimental
 --
+-- Operations on IEEE floating point numbers.
+--
 module Numeric.IEEE (
+    -- * IEEE type class
     IEEE(..),
+    -- * NaN-aware minimum and maximum
+    minNum,
+    maxNum,
+    minNaN,
+    maxNaN,
     ) where
 
 import Data.Word
 import Foreign.C.Types( CFloat, CDouble )
 
--- | IEEE floating point numbers.
+-- | IEEE floating point types.
 class (RealFloat a) => IEEE a where
     -- | Infinity value.
     infinity :: a
 
-    -- | The smallest nonzero representable normalized value.
+    -- | The smallest representable positive normalized value.
     minNormal :: a
 
-    -- | The largest finite representable value.
+    -- | The largest representable finite value.
     maxFinite :: a
 
-    -- | The smallest positive floating-point number @x@ such that @1 + x /= 1@.
+    -- | The smallest representalbe positive value @x@ such that @1 + x /= 1@.
     epsilon :: a
 
     -- | @copySign x y@ returns @x@ with its sign changed to @y@'s.
     copySign :: a -> a -> a
 
-    -- | Return true if two values are /exactly/ (bitwise) equal.
+    -- | Return 'True' if two values are /exactly/ (bitwise) equal.
     identicalIEEE :: a -> a -> Bool
 
     -- | Return the next largest IEEE value (@Infinity@ and @NaN@ are
@@ -52,32 +60,6 @@ class (RealFloat a) => IEEE a where
     -- between @0@ and @'floatDigits'@.
     sameSignificandBits :: a -> a -> Int
 
-    -- | Return the maximum of two values; if one value is @NaN@, return the
-    -- other.
-    maxNum :: a -> a -> a
-    maxNum x y | x >= y || isNaN y = x
-               | otherwise         = y
-    {-# INLINE maxNum #-}
-
-    -- | Return the minimum of two values; if one value is @NaN@, return the
-    -- other.
-    minNum :: a -> a -> a
-    minNum x y | x <= y || isNaN y = x
-               | otherwise         = y
-    {-# INLINE minNum #-}
-
-    -- | Return the maximum of two values; if one value is @NaN@, return it.
-    maxNaN :: a -> a -> a
-    maxNaN x y | x >= y || isNaN x = x
-               | otherwise         = y
-    {-# INLINE maxNaN #-}
-
-    -- | Return the minimum of two values; if one value is @NaN@, return it.
-    minNaN :: a -> a -> a
-    minNaN x y | x <= y || isNaN x = x
-               | otherwise         = y
-    {-# INLINE minNaN #-}
-
     -- | Default @NaN@ value.
     nan :: a
 
@@ -92,6 +74,35 @@ class (RealFloat a) => IEEE a where
     -- | The payload stored in a @NaN@ value.  Undefined if the argument
     -- is not @NaN@.
     nanPayload :: a -> Word64
+
+
+-- | Return the maximum of two values; if one value is @NaN@, return the
+-- other.  Prefer the first if both values are @NaN@.
+maxNum :: (RealFloat a) => a -> a -> a
+maxNum x y | x >= y || isNaN y = x
+           | otherwise         = y
+{-# INLINE maxNum #-}
+
+-- | Return the minimum of two values; if one value is @NaN@, return the
+-- other.  Prefer the first if both values are @NaN@.
+minNum :: (RealFloat a) => a -> a -> a
+minNum x y | x <= y || isNaN y = x
+           | otherwise         = y
+{-# INLINE minNum #-}
+
+-- | Return the maximum of two values; if one value is @NaN@, return it.
+-- Prefer the first if both values are @NaN@.
+maxNaN :: (RealFloat a) => a -> a -> a
+maxNaN x y | x >= y || isNaN x = x
+           | otherwise         = y
+{-# INLINE maxNaN #-}
+
+-- | Return the minimum of two values; if one value is @NaN@, return it.
+-- Prefer the first if both values are @NaN@.
+minNaN :: (RealFloat a) =>  a -> a -> a
+minNaN x y | x <= y || isNaN x = x
+           | otherwise         = y
+{-# INLINE minNaN #-}
 
 
 instance IEEE Float where
