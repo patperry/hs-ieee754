@@ -61,3 +61,29 @@ ieeemeanf (float x, float y)
     
     return u;
 }
+
+float
+mknanf (uint32_t payload)
+{
+    float x = NAN;
+    uint32_t *ux = (uint32_t *)(&x);
+    
+    /* get sign, exponent, and quiet bit from NAN */    
+    *ux &= 0xFC000000; 
+    
+    /* ignore sign, exponent, and quiet bit in payload */
+    payload &= 0x03FFFFFF;
+    *ux |= payload;
+
+    return x;
+}
+
+uint32_t
+getnanf (float x)
+{
+    uint32_t payload = *(uint32_t *)(&x);
+    
+    /* clear sign, exponent, and quiet bit */
+    payload &= 0x03FFFFFF;
+    return payload;
+}

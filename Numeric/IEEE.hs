@@ -11,15 +11,13 @@ module Numeric.IEEE (
     IEEE(..),
     ) where
 
+import Data.Word
 import Foreign.C.Types( CFloat, CDouble )
 
 -- | IEEE floating point numbers.
 class (RealFloat a) => IEEE a where
     -- | Infinity value.
     infinity :: a
-
-    -- | NaN value.
-    nan :: a
 
     -- | The smallest nonzero representable normalized value.
     minNormal :: a
@@ -47,15 +45,15 @@ class (RealFloat a) => IEEE a where
     -- (equivalent to @feqrel@ from the Tango Math library).  The result is
     -- between @0@ and @'floatDigits'@.
     sameSignificandBits :: a -> a -> Int
-    
+
     -- | Logically equivalent to @exp x - 1@, but more accurate for small
     -- @x@.
     expm1 :: a -> a
-    
+
     -- | Logically equivalent to @log (1 + x)@, but more accurate for small
     -- @x@.
     log1p :: a -> a
-    
+
     -- | Return the maximum of two values; if one value is @NaN@, return the
     -- other.
     maxNum :: a -> a -> a
@@ -69,13 +67,35 @@ class (RealFloat a) => IEEE a where
     minNum x y | isNaN y   = x
                | otherwise = min x y
     {-# INLINE minNum #-}
-    
+
+    -- | Default @NaN@ value.
+    nan :: a
+
+    -- | @NaN@ value with a positive integer payload.  Payload must be
+    -- positive and less than 'maxNaNPayload'.  Beware that while some
+    -- platforms allow using @0@ as a payload, this behavior is not
+    -- portable.
+    nanWithPayload :: Word64 -> a
+
+    -- | Maximum @NaN@ payload for type @a@.
+    maxNaNPayload :: a -> Word64
+
+    -- | The payload stored in a @NaN@ value.  Undefined if the argument
+    -- is not @NaN@.
+    nanPayload :: a -> Word64
+
 
 instance IEEE Float where
     infinity = 1/0
     {-# INLINE infinity #-}
     nan = 0/0
     {-# INLINE nan #-}
+    nanWithPayload n = c_mknanf (fromIntegral n)
+    {-# INLINE nanWithPayload #-}
+    maxNaNPayload _ = 0x03FFFFFF
+    {-# INLINE maxNaNPayload #-}
+    nanPayload x = fromIntegral $ c_getnanf x
+    {-# INLINE nanPayload #-}
     minNormal = 1.17549435e-38
     {-# INLINE minNormal #-}
     maxFinite = 3.40282347e+38
@@ -101,6 +121,12 @@ instance IEEE CFloat where
     {-# INLINE infinity #-}
     nan = 0/0
     {-# INLINE nan #-}
+    nanWithPayload n = realToFrac $ c_mknanf (fromIntegral n)
+    {-# INLINE nanWithPayload #-}
+    maxNaNPayload _ = 0x03FFFFFF
+    {-# INLINE maxNaNPayload #-}
+    nanPayload x = fromIntegral $ c_getnanf (realToFrac x)
+    {-# INLINE nanPayload #-}
     minNormal = 1.17549435e-38
     {-# INLINE minNormal #-}
     maxFinite = 3.40282347e+38
@@ -125,6 +151,12 @@ instance IEEE Double where
     {-# INLINE infinity #-}
     nan = 0/0
     {-# INLINE nan #-}
+    nanWithPayload n = c_mknan n
+    {-# INLINE nanWithPayload #-}
+    maxNaNPayload _ = 0x0007FFFFFFFFFFFF
+    {-# INLINE maxNaNPayload #-}
+    nanPayload x = c_getnan x
+    {-# INLINE nanPayload #-}
     minNormal = 2.2250738585072014e-308
     {-# INLINE minNormal #-}
     maxFinite = 1.7976931348623157e+308
@@ -149,6 +181,12 @@ instance IEEE CDouble where
     {-# INLINE infinity #-}
     nan = 0/0
     {-# INLINE nan #-}
+    nanWithPayload n = realToFrac $ c_mknan n
+    {-# INLINE nanWithPayload #-}
+    maxNaNPayload _ = 0x0007FFFFFFFFFFFF
+    {-# INLINE maxNaNPayload #-}
+    nanPayload x = c_getnan (realToFrac x)
+    {-# INLINE nanPayload #-}
     minNormal = 2.2250738585072014e-308
     {-# INLINE minNormal #-}
     maxFinite = 1.7976931348623157e+308
@@ -200,3 +238,15 @@ foreign import ccall unsafe "log1p"
     c_log1p :: Double -> Double
 foreign import ccall unsafe "log1p"
     c_log1pf :: Float -> Float
+
+foreign import ccall unsafe "mknan"
+    c_mknan :: Word64 -> Double
+
+foreign import ccall unsafe "getnan"
+    c_getnan :: Double -> Word64
+
+foreign import ccall unsafe "mknanf"
+    c_mknanf :: Word32 -> Float
+
+foreign import ccall unsafe "getnanf"
+    c_getnanf :: Float -> Word32

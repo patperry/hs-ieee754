@@ -62,3 +62,29 @@ ieeemean (double x, double y)
     
     return u;
 }
+
+double
+mknan (uint64_t payload)
+{
+    double x = NAN;
+    uint64_t *ux = (uint64_t *)(&x);
+    
+    /* get sign, exponent, and quiet bit from NAN */    
+    *ux &= 0xFFF8000000000000ULL; 
+    
+    /* ignore sign, exponent, and quiet bit in payload */
+    payload &= 0x0007FFFFFFFFFFFFULL;
+    *ux |= payload;
+
+    return x;
+}
+
+uint64_t
+getnan (double x)
+{
+    uint64_t payload = *(uint64_t *)(&x);
+    
+    /* clear ignore sign, exponent, and quiet bit */
+    payload &= 0x0007FFFFFFFFFFFFULL;    
+    return payload;
+}

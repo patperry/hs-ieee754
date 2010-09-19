@@ -447,6 +447,29 @@ test_sameSignificandBits_extreme_F6 =
     sameSignificandBits (maxFinite) (-maxFinite :: F) @?= 0
 
 
+test_nanPayload = testGroup "nanPayload"
+    [ testCase "D1" test_nanPayload_D1
+    , testCase "D2" test_nanPayload_D2
+    , testCase "F1" test_nanPayload_F1
+    , testCase "F2" test_nanPayload_F2
+    ]
+
+test_nanPayload_D1 =
+    nanPayload (nanWithPayload 1 :: D) @?= 1
+
+test_nanPayload_D2 =
+    nanPayload (nanWithPayload maxPayload :: D) @?= maxPayload
+  where
+    maxPayload = maxNaNPayload (undefined :: D)
+
+test_nanPayload_F1 =
+    nanPayload (nanWithPayload 1 :: F) @?= 1
+
+test_nanPayload_F2 =
+    nanPayload (nanWithPayload maxPayload :: F) @?= maxPayload
+  where
+    maxPayload = maxNaNPayload (undefined :: F)
+
 
 
 test_IEEE = testGroup "IEEE"
@@ -458,6 +481,7 @@ test_IEEE = testGroup "IEEE"
     , test_predIEEE
     , test_bisectIEEE
     , test_sameSignificandBits
+    , test_nanPayload
     ]
 
 main :: IO ()
