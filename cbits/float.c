@@ -69,10 +69,10 @@ mknanf (uint32_t payload)
     uint32_t *ux = (uint32_t *)(&x);
     
     /* get sign, exponent, and quiet bit from NAN */    
-    *ux &= 0xFC000000; 
+    *ux &= 0xFFC00000; 
     
     /* ignore sign, exponent, and quiet bit in payload */
-    payload &= 0x03FFFFFF;
+    payload &= 0x003FFFFF;
     *ux |= payload;
 
     return x;
@@ -84,6 +84,6 @@ getnanf (float x)
     uint32_t payload = *(uint32_t *)(&x);
     
     /* clear sign, exponent, and quiet bit */
-    payload &= 0x03FFFFFF;
+    payload &= 0x003FFFFF;
     return payload;
 }

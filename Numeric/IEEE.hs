@@ -91,7 +91,7 @@ instance IEEE Float where
     {-# INLINE nan #-}
     nanWithPayload n = c_mknanf (fromIntegral n)
     {-# INLINE nanWithPayload #-}
-    maxNaNPayload _ = 0x03FFFFFF
+    maxNaNPayload _ = 0x003FFFFF
     {-# INLINE maxNaNPayload #-}
     nanPayload x = fromIntegral $ c_getnanf x
     {-# INLINE nanPayload #-}
@@ -122,7 +122,7 @@ instance IEEE CFloat where
     {-# INLINE nan #-}
     nanWithPayload n = realToFrac $ c_mknanf (fromIntegral n)
     {-# INLINE nanWithPayload #-}
-    maxNaNPayload _ = 0x03FFFFFF
+    maxNaNPayload _ = 0x003FFFFF
     {-# INLINE maxNaNPayload #-}
     nanPayload x = fromIntegral $ c_getnanf (realToFrac x)
     {-# INLINE nanPayload #-}
