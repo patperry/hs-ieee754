@@ -16,11 +16,12 @@ cabal-version: >= 1.2.0
 build-type:      Simple
 tested-with:     GHC ==6.12.3
 
-extra-source-files: NEWS tests/Makefile tests/Tests.hs cbits/feqrel_source.c
-                    LICENSE.Tango
+extra-source-files: LICENSE.Tango NEWS cbits/feqrel_source.c
+                    tests/Makefile tests/Tests.hs
 
 flag big_endian
-  description: Build for a big endian machine.
+  description: Build for a big endian machine.  Beware that only
+               little endian machines have been tested.
   default:     False
 
 library
