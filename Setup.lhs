@@ -2,7 +2,5 @@
 > import Distribution.Simple
 > import System.Cmd
 >
-> testing _ _ _ _ = system "runhaskell tests/Properties.hs" >> return ()
+> main = defaultMain
 >
-> main = defaultMainWithHooks simpleUserHooks
->        {runTests=testing}
