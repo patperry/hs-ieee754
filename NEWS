@@ -1,3 +1,42 @@
+Changes in 0.7:
+
+* Add IEEE type class with instances for Double, Float, CDouble, and CFloat
+
+* Add functions for getting/setting NaN payloads
+
+* Add succIEEE/predIEEE for advancing up and down the IEEE number line
+  (ported from Tango's nextUp and nextDown)
+
+* Add bisectIEEE for midpoints of two numbers on the IEEE number line
+  (ported from Tango's ieeeMean)
+
+* Add identicalIEEE for exact (bitwise) equality of IEEE numbers
+
+* Add copySign for setting the sign bit of an IEEE number
+
+* Add sameSignificandBits for seeing how many significand bits of two
+  IEEE numbers agree, ported from Tango's feqrel
+
+* Add nan, infinity, maxFinite, minNormal constants for IEEE numbers
+
+* Add maxNum and minNum
+
+* Rename maxF and minF to maxNaN and minNaN
+
+* Switch to a simpler "~==" comparison for complex numbers
+
+* Make "~==" comparison use sameSignificandBits for IEEE types
+
+* Make "===" comparison use bitwise equality for IEEE types
+
+* Remove old "eqRel" comparisons.
+
+* Remove old epsilon' and delta constants
+
+* Remove (RealFloat a) => AEq (Complex a) instance in favor of explicit
+  instances for Complex {Double,Float,CDouble,CFloat}
+
+
 Changes in 0.6.1:
 
  * Remove AEq instance for CLDouble (thanks to Bjorn Buckwalter)
