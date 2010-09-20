@@ -1,4 +1,4 @@
-name:            ieee
+name:            ieee754
 version:         0.7
 homepage:        http://github.com/patperry/hs-ieee
 synopsis:        Utilities for dealing with IEEE floating point numbers
