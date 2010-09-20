@@ -1,3 +1,8 @@
+Changes in 0.7.2:
+
+* Fix aliasing warnings in C code
+
+
 Changes in 0.7.1:
 
 * Rename package from "ieee" to "ieee754"
