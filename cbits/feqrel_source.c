@@ -40,68 +40,68 @@
 int
 FEQREL (REAL x, REAL y)
 {
-	/* Public Domain. Original Author: Don Clugston, 18 Aug 2005.
-	 * Ported to C by Patrick Perry, 26 Feb 2010.
-	 */
-	if (x == y) return REAL_MANT_DIG; /* ensure diff!= 0, cope with INF. */
+    /* Public Domain. Original Author: Don Clugston, 18 Aug 2005.
+     * Ported to C by Patrick Perry, 26 Feb 2010.
+     */
+    if (x == y) return REAL_MANT_DIG; /* ensure diff!= 0, cope with INF. */
 
-	REAL diff = REAL_ABS(x - y);
+    REAL diff = REAL_ABS(x - y);
 
-	uint16_t *pa = (uint16_t *)(&x);
-	uint16_t *pb = (uint16_t *)(&y);
-	uint16_t *pd = (uint16_t *)(&diff);
+    union { REAL r; uint16_t w[sizeof(REAL)/2]; } pa = { x };
+    union { REAL r; uint16_t w[sizeof(REAL)/2]; } pb = { y };
+    union { REAL r; uint16_t w[sizeof(REAL)/2]; } pd = { diff };    
 
-	/* The difference in abs(exponent) between x or y and abs(x-y)
-	 * is equal to the number of significand bits of x which are
-	 * equal to y. If negative, x and y have different exponents.
-	 * If positive, x and y are equal to 'bitsdiff' bits.
-	 * AND with 0x7FFF to form the absolute value.
-	 * To avoid out-by-1 errors, we subtract 1 so it rounds down
-	 * if the exponents were different. This means 'bitsdiff' is
-	 * always 1 lower than we want, except that if bitsdiff==0,
-	 * they could have 0 or 1 bits in common.
-	 */
+    /* The difference in abs(exponent) between x or y and abs(x-y)
+     * is equal to the number of significand bits of x which are
+     * equal to y. If negative, x and y have different exponents.
+     * If positive, x and y are equal to 'bitsdiff' bits.
+     * AND with 0x7FFF to form the absolute value.
+     * To avoid out-by-1 errors, we subtract 1 so it rounds down
+     * if the exponents were different. This means 'bitsdiff' is
+     * always 1 lower than we want, except that if bitsdiff==0,
+     * they could have 0 or 1 bits in common.
+     */
 #if REAL_MANT_DIG == 53 /* double */
-	int bitsdiff = (( ((pa[REAL_EXPPOS_INT16] & REAL_EXPMASK)
-                     + (pb[REAL_EXPPOS_INT16] & REAL_EXPMASK)
+    int bitsdiff = (( ((pa.w[REAL_EXPPOS_INT16] & REAL_EXPMASK)
+                     + (pb.w[REAL_EXPPOS_INT16] & REAL_EXPMASK)
                      - ((uint16_t) 0x8000 - REAL_EXPMASK)) >> 1)
-                   - (pd[REAL_EXPPOS_INT16] & REAL_EXPMASK)) >> 4;
+                   - (pd.w[REAL_EXPPOS_INT16] & REAL_EXPMASK)) >> 4;
 #elif REAL_MANT_DIG == 24 /* float */
-	int bitsdiff = (( ((pa[REAL_EXPPOS_INT16] & REAL_EXPMASK)
-                     + (pb[REAL_EXPPOS_INT16] & REAL_EXPMASK)
+    int bitsdiff = (( ((pa.w[REAL_EXPPOS_INT16] & REAL_EXPMASK)
+                     + (pb.w[REAL_EXPPOS_INT16] & REAL_EXPMASK)
                      - ((uint16_t) 0x8000 - REAL_EXPMASK)) >> 1)
-                    - (pd[REAL_EXPPOS_INT16] & REAL_EXPMASK)) >> 7;
+                    - (pd.w[REAL_EXPPOS_INT16] & REAL_EXPMASK)) >> 7;
 #else
 # error unsuported floating-point mantissa size
 #endif
 
-	if ((pd[REAL_EXPPOS_INT16] & REAL_EXPMASK) == 0) {
-		/* Difference is denormal
-		 * For denormals, we need to add the number of zeros that
-		 * lie at the start of diff's significand.
-		 * We do this by multiplying by 2^REAL_MANT_DIG
-		 */
-		diff *= REAL_RECIP_EPSILON;
+    if ((pd.w[REAL_EXPPOS_INT16] & REAL_EXPMASK) == 0) {
+        /* Difference is denormal
+         * For denormals, we need to add the number of zeros that
+         * lie at the start of diff's significand.
+         * We do this by multiplying by 2^REAL_MANT_DIG
+         */
+        pd.r *= REAL_RECIP_EPSILON;
 
 #if REAL_MANT_DIG == 53 /* double */
         return (bitsdiff + REAL_MANT_DIG
-                - (pd[REAL_EXPPOS_INT16] >> 4));
+                - (pd.w[REAL_EXPPOS_INT16] >> 4));
 #elif REAL_MANT_DIG == 24 /* float */
         return (bitsdiff + REAL_MANT_DIG
-                - (pd[REAL_EXPPOS_INT16] >> 7));
+                - (pd.w[REAL_EXPPOS_INT16] >> 7));
 #else
 # error unsuported floating-point mantissa size
 #endif
 
-	}
+    }
 
-	if (bitsdiff > 0)
-		return bitsdiff + 1; /* add the 1 we subtracted before */
+    if (bitsdiff > 0)
+        return bitsdiff + 1; /* add the 1 we subtracted before */
 
-	/* Avoid out-by-1 errors when factor is almost 2. */
-	return (bitsdiff == 0
-            && !((pa[REAL_EXPPOS_INT16]
-		          ^ pb[REAL_EXPPOS_INT16]) & REAL_EXPMASK)) ? 1 : 0;
+    /* Avoid out-by-1 errors when factor is almost 2. */
+    return (bitsdiff == 0
+            && !((pa.w[REAL_EXPPOS_INT16]
+                  ^ pb.w[REAL_EXPPOS_INT16]) & REAL_EXPMASK)) ? 1 : 0;
 }
 
 #undef REAL_RECIP_EPSILON

@@ -14,35 +14,40 @@
 #define FEQREL           feqrel
 #include "feqrel_source.c"
 
+union double_t {
+    double d;
+    uint64_t w;
+};
+
 int
 identical (double x, double y)
 {
-    uint64_t *ux = (uint64_t *)(&x);
-    uint64_t *uy = (uint64_t *)(&y);
-    return *ux == *uy;
+    union double_t ux = { x };
+    union double_t uy = { y };
+    return ux.w == uy.w;
 }
 
 /* ported from tango/math/IEEE.d */
 double
 nextup (double x)
 {
-    uint64_t *ps = (uint64_t *)&x;
+    union double_t ps = { x };
 
-    if ((*ps & 0x7FF0000000000000ULL) == 0x7FF0000000000000ULL) {
+    if ((ps.w & 0x7FF0000000000000ULL) == 0x7FF0000000000000ULL) {
         /* First, deal with NANs and infinity */
         if (x == -INFINITY) return -REAL_MAX;
         return x; // +INF and NAN are unchanged.
     }
-    if (*ps & 0x8000000000000000ULL)  { /* Negative number */
-        if (*ps == 0x8000000000000000ULL) { /* it was negative zero */
-            *ps = 0x0000000000000001ULL; /* change to smallest subnormal */
-            return x;
+    if (ps.w & 0x8000000000000000ULL)  { /* Negative number */
+        if (ps.w == 0x8000000000000000ULL) { /* it was negative zero */
+            ps.w = 0x0000000000000001ULL; /* change to smallest subnormal */
+            return ps.d;
         }
-        --*ps;
+        --ps.w;
     } else { /* Positive number */
-        ++*ps;
+        ++ps.w;
     }
-    return x;
+    return ps.d;
 }
 
 /* ported from tango/math/IEEE.d */
@@ -58,41 +63,38 @@ ieeemean (double x, double y)
 {
     if (!((x>=0 && y>=0) || (x<=0 && y<=0))) return NAN;
     
-    double u;
+    union double_t ul;
+    union double_t xl = { x };
+    union double_t yl = { y };
+    uint64_t m = ( (xl.w & 0x7FFFFFFFFFFFFFFFULL)
+                 + (yl.w & 0x7FFFFFFFFFFFFFFFULL) ) >> 1;
+    m |= (xl.w & 0x8000000000000000ULL);
+    ul.w = m;
     
-    uint64_t *ul = (uint64_t *)&u;
-    uint64_t *xl = (uint64_t *)&x;
-    uint64_t *yl = (uint64_t *)&y;
-    uint64_t m = ( ((*xl) & 0x7FFFFFFFFFFFFFFFULL)
-                 + ((*yl) & 0x7FFFFFFFFFFFFFFFULL) ) >> 1;
-    m |= ((*xl) & 0x8000000000000000ULL);
-    *ul = m;
-    
-    return u;
+    return ul.d;
 }
 
 double
 mknan (uint64_t payload)
 {
-    double x = NAN;
-    uint64_t *ux = (uint64_t *)(&x);
+    union double_t x = { NAN };
     
     /* get sign, exponent, and quiet bit from NAN */    
-    *ux &= 0xFFF8000000000000ULL; 
+    x.w &= 0xFFF8000000000000ULL; 
     
     /* ignore sign, exponent, and quiet bit in payload */
     payload &= 0x0007FFFFFFFFFFFFULL;
-    *ux |= payload;
+    x.w |= payload;
 
-    return x;
+    return x.d;
 }
 
 uint64_t
 getnan (double x)
 {
-    uint64_t payload = *(uint64_t *)(&x);
+    union double_t payload = { x };
     
-    /* clear ignore sign, exponent, and quiet bit */
-    payload &= 0x0007FFFFFFFFFFFFULL;    
-    return payload;
+    /* clear sign, exponent, and quiet bit */
+    payload.w &= 0x0007FFFFFFFFFFFFULL;    
+    return payload.w;
 }

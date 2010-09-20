@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdint.h>
 
+
 #define REAL             float
 #define REAL_ABS         fabsf
 
@@ -14,35 +15,40 @@
 #define FEQREL           feqrelf
 #include "feqrel_source.c"
 
+union float_t {
+    float f;
+    uint32_t w;
+};
+
 int
 identicalf (float x, float y)
 {
-    uint32_t *ux = (uint32_t *)(&x);
-    uint32_t *uy = (uint32_t *)(&y);
-    return *ux == *uy;
+    union float_t ux = { x };
+    union float_t uy = { y };
+    return ux.w == uy.w;
 }
 
 /* ported from tango/math/IEEE.d */
 float
 nextupf (float x)
 {
-    uint32_t *ps = (uint32_t *)&x;
+    union float_t ps = { x };
 
-    if ((*ps & 0x7F800000) == 0x7F800000) {
+    if ((ps.w & 0x7F800000) == 0x7F800000) {
         /* First, deal with NANs and infinity */
         if (x == -INFINITY) return -REAL_MAX;
         return x; /* +INF and NAN are unchanged. */
     }
-    if (*ps & 0x80000000)  { /* Negative number */
-        if (*ps == 0x80000000) { /* it was negative zero */
-            *ps = 0x00000001; /* change to smallest subnormal */
-            return x;
+    if (ps.w & 0x80000000)  { /* Negative number */
+        if (ps.w == 0x80000000) { /* it was negative zero */
+            ps.w = 0x00000001; /* change to smallest subnormal */
+            return ps.f;
         }
-        --*ps;
+        --ps.w;
     } else { /* Positive number */
-        ++*ps;
+        ++ps.w;
     }
-    return x;
+    return ps.f;
 }
 
 /* ported from tango/math/IEEE.d */
@@ -58,40 +64,37 @@ ieeemeanf (float x, float y)
 {
     if (!((x>=0 && y>=0) || (x<=0 && y<=0))) return NAN;
     
-    float u;
+    union float_t ul;
+    union float_t xl = { x };
+    union float_t yl = { y };
+    uint32_t m = ((xl.w & 0x7FFFFFFF) + (yl.w & 0x7FFFFFFF)) >> 1;
+    m |= (xl.w & 0x80000000);
+    ul.w = m;
     
-    uint32_t *ul = (uint32_t *)&u;
-    uint32_t *xl = (uint32_t *)&x;
-    uint32_t *yl = (uint32_t *)&y;
-    uint32_t m = (((*xl) & 0x7FFFFFFF) + ((*yl) & 0x7FFFFFFF)) >> 1;
-    m |= ((*xl) & 0x80000000);
-    *ul = m;
-    
-    return u;
+    return ul.f;
 }
 
 float
 mknanf (uint32_t payload)
 {
-    float x = NAN;
-    uint32_t *ux = (uint32_t *)(&x);
+    union float_t ux = { NAN };
     
     /* get sign, exponent, and quiet bit from NAN */    
-    *ux &= 0xFFC00000; 
+    ux.w &= 0xFFC00000; 
     
     /* ignore sign, exponent, and quiet bit in payload */
     payload &= 0x003FFFFF;
-    *ux |= payload;
+    ux.w |= payload;
 
-    return x;
+    return ux.f;
 }
 
 uint32_t
 getnanf (float x)
 {
-    uint32_t payload = *(uint32_t *)(&x);
+    union float_t payload = { x };
     
     /* clear sign, exponent, and quiet bit */
-    payload &= 0x003FFFFF;
-    return payload;
+    payload.w &= 0x003FFFFF;
+    return payload.w;
 }
