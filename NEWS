@@ -1,3 +1,8 @@
+Changes in 0.7.1:
+
+* Rename package from "ieee" to "ieee754"
+
+
 Changes in 0.7:
 
 * Add IEEE type class with instances for Double, Float, CDouble, and CFloat
