@@ -63,8 +63,8 @@ class (RealFloat a) => IEEE a where
     -- | Default @NaN@ value.
     nan :: a
 
-    -- | @NaN@ value with a positive integer payload.  Payload must be
-    -- ess than 'maxNaNPayload'.  Beware that while some platforms allow
+    -- | Quiet @NaN@ value with a positive integer payload.  Payload must be
+    -- less than 'maxNaNPayload'.  Beware that while some platforms allow
     -- using @0@ as a payload, this behavior is not portable.
     nanWithPayload :: Word64 -> a
 
