@@ -74,7 +74,7 @@ class Eq a => AEq a where
 approxEqIEEE :: (IEEE a) => a -> a -> Bool
 approxEqIEEE x y =
     ( sameSignificandBits x y >= d
-    || (x < epsilon && y < epsilon)
+    || (abs x < epsilon && abs y < epsilon)
     || (isNaN x && isNaN y)
     )
   where
