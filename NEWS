@@ -1,3 +1,8 @@
+Changes in 0.7.3:
+
+* Bugfix from Björn Buckwalter: any two negative values were aproxEqIEEE
+
+
 Changes in 0.7.2:
 
 * Fix aliasing warnings in C code
