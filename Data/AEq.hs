@@ -17,6 +17,7 @@ import Foreign
 import Foreign.C.Types
 import Data.Complex
 import Numeric.IEEE
+import qualified Data.Map as M
 
 infix 4 ===, ~==
 
@@ -200,6 +201,12 @@ instance (AEq a) => AEq [a] where
     {-# INLINE (===) #-}
     (~==) = eqListsWith (~==)
     {-# INLINE (~==) #-}
+
+instance (AEq k, AEq a) => AEq (M.Map k a) where
+  (===) m1 m2 = M.toList m1 === M.toList m2
+  {-# INLINE (===) #-}
+  (~==) m1 m2 = M.toList m1 ~== M.toList m2
+  {-# INLINE (~==) #-}
 
 instance (AEq a) => AEq (Maybe a) where
     (===) Nothing  Nothing  = True
