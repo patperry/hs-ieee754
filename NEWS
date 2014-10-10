@@ -4,6 +4,8 @@ Changes in 0.7.4:
 
 * Remove libm dependency
 
+* Anders Kaseorg fixed documentation for epsilon.
+
 
 Changes in 0.7.3:
 

@@ -33,7 +33,7 @@ class (RealFloat a) => IEEE a where
     -- | The largest representable finite value.
     maxFinite :: a
 
-    -- | The smallest representalbe positive value @x@ such that @1 + x /= 1@.
+    -- | The smallest positive value @x@ such that @1 + x@ is representable.
     epsilon :: a
 
     -- | @copySign x y@ returns @x@ with its sign changed to @y@'s.
