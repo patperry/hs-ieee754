@@ -28,6 +28,18 @@ identicalf (float x, float y)
     return ux.w == uy.w;
 }
 
+float
+copysignf (float x, float y)
+{
+    union float_t ux = { x };
+    union float_t uy = { y };
+    union float_t uz;
+    uint32_t val  = ux.w & 0x7FFFFFFF;
+    uint32_t sign = uy.w & 0x80000000;
+    uz.w = sign | val;
+    return uz.f;
+}
+
 /* ported from tango/math/IEEE.d */
 float
 nextupf (float x)

@@ -27,6 +27,18 @@ identical (double x, double y)
     return ux.w == uy.w;
 }
 
+double
+copysign (double x, double y)
+{
+    union double_t ux = { x };
+    union double_t uy = { y };
+    union double_t uz;
+    uint64_t val  = ux.w & 0x7FFFFFFFFFFFFFFFULL;
+    uint64_t sign = uy.w & 0x8000000000000000ULL;
+    uz.w = sign | val;
+    return uz.d;
+}
+
 /* ported from tango/math/IEEE.d */
 double
 nextup (double x)
