@@ -1,5 +1,5 @@
 name:            ieee754
-version:         0.7.4
+version:         0.7.5
 homepage:        http://github.com/patperry/hs-ieee754
 synopsis:        Utilities for dealing with IEEE floating point numbers
 description:
@@ -19,11 +19,6 @@ tested-with:     GHC ==7.6.3
 extra-source-files: LICENSE.Tango NEWS cbits/feqrel_source.c
                     tests/Makefile tests/Tests.hs
 
-flag big_endian
-  description: Build for a big endian machine.  Beware that only
-               little endian machines have been tested.
-  default:     False
-
 library
     exposed-modules: Data.AEq
                      Numeric.IEEE
@@ -39,5 +34,3 @@ library
                      cbits/double.c
 
     cc-options:      -Wall --std=c99
-    if flag(big_endian)
-        cc-options:  -DBIG_ENDIAN
