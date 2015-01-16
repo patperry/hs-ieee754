@@ -5,7 +5,7 @@
  *
  * We are assuming that the endianness is the same for integers and floats;
  * this is true for modern systems but false in a few historical machines and
- * some old ARMS processors; see
+ * some old ARM processors; see
  * http://en.wikipedia.org/wiki/Endianness#Floating-point_and_endianness .
  */
 
@@ -16,24 +16,24 @@
   platforms.
 */
 #ifdef __BIG_ENDIAN__
-#define WORDS_BIGENDIAN 1
+#  define WORDS_BIGENDIAN 1
 #else /* __BIG_ENDIAN__ */
-#ifdef __LITTLE_ENDIAN__
-#undef WORDS_BIGENDIAN
-#else
-#ifdef BSD
-#include <sys/endian.h>
-#else
-#include <endian.h>
-#endif
-#if __BYTE_ORDER == __BIG_ENDIAN
-#define WORDS_BIGENDIAN 1
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
-#undef WORDS_BIGENDIAN
-#else
-#error "unable to determine endianess!"
-#endif /* __BYTE_ORDER */
-#endif /* __LITTLE_ENDIAN__ */
+#  ifdef __LITTLE_ENDIAN__
+#    undef WORDS_BIGENDIAN
+#  else
+#    ifdef BSD
+#      include <sys/endian.h>
+#    else
+#      include <endian.h>
+#    endif
+#    if __BYTE_ORDER == __BIG_ENDIAN
+#      define WORDS_BIGENDIAN 1
+#    elif __BYTE_ORDER == __LITTLE_ENDIAN
+#      undef WORDS_BIGENDIAN
+#    else
+#      error "unable to determine endianess!"
+#    endif /* __BYTE_ORDER */
+#  endif /* __LITTLE_ENDIAN__ */
 #endif /* __BIG_ENDIAN__ */
 
 
