@@ -1,5 +1,5 @@
 name:            ieee754
-version:         0.7.6
+version:         0.7.7
 homepage:        http://github.com/patperry/hs-ieee754
 synopsis:        Utilities for dealing with IEEE floating point numbers
 description:
