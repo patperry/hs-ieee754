@@ -168,6 +168,36 @@ test_infinity_D2 = infinity > (0 :: D) @?= True
 test_infinity_F1 = isInfinite (infinity :: F) @?= True
 test_infinity_F2 = infinity > (0 :: F) @?= True
 
+
+test_minNormal = testGroup "minNormal"
+    [ testCase "D" (go (minNormal :: D))
+    , testCase "F" (go (minNormal :: F))
+    ]
+    where
+        go n = let (e,_) = floatRange (undefined `asTypeOf` n)
+               in  n @?= encodeFloat 1 (e-1)
+
+
+test_maxFinite = testGroup "maxFinite"
+    [ testCase "D" (go (maxFinite :: D))
+    , testCase "F" (go (maxFinite :: F))
+    ]
+    where
+        go n = let r     = floatRadix  (undefined `asTypeOf` n)
+                   d     = floatDigits (undefined `asTypeOf` n)
+                   (_,e) = floatRange  (undefined `asTypeOf` n)
+               in  n @?= encodeFloat (r^d-1) (e-d)
+
+
+test_epsilon = testGroup "epsilon"
+    [ testCase "D" (go (epsilon :: D))
+    , testCase "F" (go (epsilon :: F))
+    ]
+    where
+        go n = let d = floatDigits (undefined `asTypeOf` n)
+               in  n @?= encodeFloat 1 (1-d)
+
+
 -- succIEEE and predIEEE tests ported from tango/math/IEEE.d
 test_succIEEE = testGroup "succIEEE"
     [ testCase "nan D" test_succIEEE_nan_D
@@ -561,6 +591,16 @@ test_nanWithPayload_F2 =
     maxPayload = maxNaNPayload (undefined :: F)
 
 
+test_maxNaNPayload = testGroup "maxNaNPayload"
+    [ testCase "D" (go (undefined :: D))
+    , testCase "F" (go (undefined :: F))
+    ]
+    where
+        go n = let b = floatRadix  (undefined `asTypeOf` n)
+                   d = floatDigits (undefined `asTypeOf` n)
+               in  maxNaNPayload n @?= fromIntegral (b^(d-2)-1)
+
+
 test_nanPayload = testGroup "nanPayload"
     [ testCase "D1" test_nanPayload_D1
     , testCase "D2" test_nanPayload_D2
@@ -641,6 +681,9 @@ test_copySign_F6 =
 
 test_IEEE = testGroup "IEEE"
     [ test_infinity
+    , test_minNormal
+    , test_maxFinite
+    , test_epsilon
     , test_copySign
     , test_succIEEE
     , test_predIEEE
@@ -652,6 +695,7 @@ test_IEEE = testGroup "IEEE"
     , test_minNaN
     , test_nan
     , test_nanWithPayload
+    , test_maxNaNPayload
     , test_nanPayload
     ]
 
