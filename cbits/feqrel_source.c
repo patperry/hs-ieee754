@@ -1,48 +1,11 @@
 /* adapted from Tango version 0.99.9, BSD Licensed
  */
 
-/* Endianness detection modified from http://esr.ibiblio.org/?p=5095 and
- * https://gist.github.com/panzi/6856583 .
- *
- * We are assuming that the endianness is the same for integers and floats;
- * this is true for modern systems but false in a few historical machines and
- * some old ARM processors; see
- * http://en.wikipedia.org/wiki/Endianness#Floating-point_and_endianness .
- */
-
-/*
-   __BIG_ENDIAN__ and __LITTLE_ENDIAN__ are defined in some gcc versions
-  only, probably depending on the architecture. Try to use endian.h if
-  the gcc way fails - endian.h also does not seem to be available on all
-  platforms.
-*/
-
-/* Assume Windows is little endian (http://stackoverflow.com/a/6449581 ) */
-#if (defined(_WIN16) || defined(_WIN32) || defined(_WIN64)) && !defined(__LITTLE_ENDIAN__)
-#  define __LITTLE_ENDIAN__
-#endif
-
-#ifdef __BIG_ENDIAN__
+#if BYTES_BIG_ENDIAN
 #  define WORDS_BIGENDIAN 1
 #else
-#  ifdef __LITTLE_ENDIAN__
-#    undef WORDS_BIGENDIAN
-#  else
-#    if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
-#      include <sys/endian.h>
-#    else
-#      include <endian.h>
-#    endif
-#    if __BYTE_ORDER == __BIG_ENDIAN
-#      define WORDS_BIGENDIAN 1
-#    elif __BYTE_ORDER == __LITTLE_ENDIAN
-#      undef WORDS_BIGENDIAN
-#    else
-#      error "unable to determine endianess!"
-#    endif /* __BYTE_ORDER */
-#  endif /* __LITTLE_ENDIAN__ */
-#endif /* __BIG_ENDIAN__ */
-
+#  undef WORDS_BIGENDIAN
+#endif
 
 /* REAL_EXPMASK is a ushort mask to select the exponent portion (without sign)
  * REAL_SIGNMASK is a ushort mask to select the sign bit.
