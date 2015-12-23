@@ -22,10 +22,10 @@
 #  define __LITTLE_ENDIAN__
 #endif
 
-#ifdef __BIG_ENDIAN__
+#if defined(__BIG_ENDIAN__) || defined(_BIG_ENDIAN)
 #  define WORDS_BIGENDIAN 1
 #else
-#  ifdef __LITTLE_ENDIAN__
+#  if defined(__LITTLE_ENDIAN__) || defined(_LITTLE_ENDIAN)
 #    undef WORDS_BIGENDIAN
 #  else
 #    if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
