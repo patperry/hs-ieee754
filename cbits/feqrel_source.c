@@ -17,12 +17,10 @@
 /* (1) Try to use the GCC/Clang __BYTE_ORDER__ defines */
 #  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #    define WORDS_BIGENDIAN 1
+#  elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#    undef WORDS_BIGENDIAN
 #  else
-#    if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#      undef WORDS_BIGENDIAN
-#    else
-#      error byte order not supported
-#    endif
+#    error byte order not supported
 #  endif
 /* (2) Otherwise, try the __BIG_ENDIAN__ and __LITTLE_ENDIAN__ defines */
 #elif defined(__BIG_ENDIAN__)
