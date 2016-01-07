@@ -22,6 +22,16 @@
 #  define __LITTLE_ENDIAN__
 #endif
 
+#ifdef __BYTE_ORDER__
+#  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#    define WORDS_BIGENDIAN 1
+#  else
+#    if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#      undef WORDS_BIGENDIAN
+#    endif
+#  endif
+#endif
+
 #ifdef __BIG_ENDIAN__
 #  define WORDS_BIGENDIAN 1
 #else
