@@ -16,7 +16,7 @@ cabal-version: >= 1.2.0
 build-type:      Simple
 tested-with:     GHC ==7.6.3
 
-extra-source-files: LICENSE.Tango NEWS cbits/feqrel_source.c
+extra-source-files: LICENSE.Tango CHANGELOG cbits/feqrel_source.c
                     tests/Makefile tests/Tests.hs
 
 library

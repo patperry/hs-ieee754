@@ -32,7 +32,7 @@ Changes in 0.7.4:
 
 Changes in 0.7.3:
 
-* Bugfix from Björn Buckwalter: any two negative values were aproxEqIEEE
+* Bugfix from Björn Buckwalter: any two negative values were approxEqIEEE
 
 
 Changes in 0.7.2:
