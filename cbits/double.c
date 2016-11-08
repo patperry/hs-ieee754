@@ -39,9 +39,9 @@ copysign (double x, double y)
     return uz.d;
 }
 
-/* ported from tango/math/IEEE.d */
+/* ported from tango/math/IEEE.d nextup */
 double
-nextup (double x)
+ieeesucc (double x)
 {
     union double_t ps = { x };
 
@@ -62,11 +62,11 @@ nextup (double x)
     return ps.d;
 }
 
-/* ported from tango/math/IEEE.d */
+/* ported from tango/math/IEEE.d nextdown */
 double
-nextdown (double x)
+ieeepred (double x)
 {
-    return -nextup(-x);
+    return -ieeesucc(-x);
 }
 
 /* ported from tango/math/IEEE.d */

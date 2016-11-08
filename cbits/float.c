@@ -40,9 +40,9 @@ copysignf (float x, float y)
     return uz.f;
 }
 
-/* ported from tango/math/IEEE.d */
+/* ported from tango/math/IEEE.d nextupf */
 float
-nextupf (float x)
+ieeesuccf (float x)
 {
     union float_t ps = { x };
 
@@ -63,11 +63,11 @@ nextupf (float x)
     return ps.f;
 }
 
-/* ported from tango/math/IEEE.d */
+/* ported from tango/math/IEEE.d nextdownf */
 float
-nextdownf (float x)
+ieeepredf (float x)
 {
-    return -nextupf(-x);
+    return -ieeesuccf(-x);
 }
 
 /* ported from tango/math/IEEE.d */

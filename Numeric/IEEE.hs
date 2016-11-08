@@ -126,9 +126,9 @@ instance IEEE Float where
     {-# INLINE epsilon #-}
     copySign = c_copysignf
     {-# INLINE copySign #-}
-    succIEEE = c_nextupf
+    succIEEE = c_ieeesuccf
     {-# INLINE succIEEE #-}
-    predIEEE = c_nextdownf
+    predIEEE = c_ieeepredf
     {-# INLINE predIEEE #-}
     bisectIEEE = c_ieeemeanf
     {-# INLINE bisectIEEE #-}
@@ -157,9 +157,9 @@ instance IEEE CFloat where
     {-# INLINE epsilon #-}
     copySign x y = realToFrac $ c_copysignf (realToFrac x) (realToFrac y)
     {-# INLINE copySign #-}
-    succIEEE x = realToFrac $ c_nextupf (realToFrac x)
+    succIEEE x = realToFrac $ c_ieeesuccf (realToFrac x)
     {-# INLINE succIEEE #-}
-    predIEEE x = realToFrac $ c_nextdownf (realToFrac x)
+    predIEEE x = realToFrac $ c_ieeepredf (realToFrac x)
     {-# INLINE predIEEE #-}
     bisectIEEE x y = realToFrac $ c_ieeemeanf (realToFrac x) (realToFrac y)
     {-# INLINE bisectIEEE #-}
@@ -188,9 +188,9 @@ instance IEEE Double where
     {-# INLINE epsilon #-}
     copySign = c_copysign
     {-# INLINE copySign #-}
-    succIEEE = c_nextup
+    succIEEE = c_ieeesucc
     {-# INLINE succIEEE #-}
-    predIEEE = c_nextdown
+    predIEEE = c_ieeepred
     {-# INLINE predIEEE #-}
     bisectIEEE = c_ieeemean
     {-# INLINE bisectIEEE #-}
@@ -217,11 +217,11 @@ instance IEEE CDouble where
     {-# INLINE maxFinite #-}
     epsilon = 2.2204460492503131e-16
     {-# INLINE epsilon #-}
-    succIEEE x = realToFrac $ c_nextup (realToFrac x)
+    succIEEE x = realToFrac $ c_ieeesucc (realToFrac x)
     {-# INLINE succIEEE #-}
     copySign x y = realToFrac $ c_copysign (realToFrac x) (realToFrac y)
     {-# INLINE copySign #-}
-    predIEEE x = realToFrac $ c_nextdown (realToFrac x)
+    predIEEE x = realToFrac $ c_ieeepred (realToFrac x)
     {-# INLINE predIEEE #-}
     bisectIEEE x y = realToFrac $ c_ieeemean (realToFrac x) (realToFrac y)
     {-# INLINE bisectIEEE #-}
@@ -240,17 +240,17 @@ foreign import ccall unsafe "feqrel"
 foreign import ccall unsafe "feqrelf"
     c_feqrelf :: Float -> Float -> Int
 
-foreign import ccall unsafe "nextup"
-    c_nextup :: Double -> Double
+foreign import ccall unsafe "ieeesucc"
+    c_ieeesucc :: Double -> Double
 
-foreign import ccall unsafe "nextupf"
-    c_nextupf :: Float -> Float
+foreign import ccall unsafe "ieeesuccf"
+    c_ieeesuccf :: Float -> Float
 
-foreign import ccall unsafe "nextdown"
-    c_nextdown :: Double -> Double
+foreign import ccall unsafe "ieeepred"
+    c_ieeepred :: Double -> Double
 
-foreign import ccall unsafe "nextdownf"
-    c_nextdownf :: Float -> Float
+foreign import ccall unsafe "ieeepredf"
+    c_ieeepredf :: Float -> Float
 
 foreign import ccall unsafe "ieeemean"
     c_ieeemean :: Double -> Double -> Double
