@@ -13,13 +13,13 @@ type D = Double
 type F = Float
 
 infix 1 @?~=, @?==
-    
-(@?~=) actual expected = 
+
+(@?~=) actual expected =
     unless (actual ~== expected) (assertFailure msg)
   where
     msg = "expected: " ++ show expected ++ "\n but got: " ++ show actual
 
-(@?==) actual expected = 
+(@?==) actual expected =
     unless (actual === expected) (assertFailure msg)
   where
     msg = "expected: " ++ show expected ++ "\n but got: " ++ show actual
@@ -31,12 +31,12 @@ test_maxNum = testGroup "maxNum"
     , testCase "D2" test_maxNum_D2
     , testCase "D3" test_maxNum_D3
     , testCase "D4" test_maxNum_D4
-    , testCase "D5" test_maxNum_D5    
+    , testCase "D5" test_maxNum_D5
     , testCase "F1" test_maxNum_F1
     , testCase "F2" test_maxNum_F2
     , testCase "F3" test_maxNum_F3
     , testCase "F4" test_maxNum_F4
-    , testCase "F5" test_maxNum_F5    
+    , testCase "F5" test_maxNum_F5
     ]
 
 test_maxNum_D1 = maxNum nan 1 @?= (1 :: D)
@@ -60,12 +60,12 @@ test_minNum = testGroup "minNum"
     , testCase "D2" test_minNum_D2
     , testCase "D3" test_minNum_D3
     , testCase "D4" test_minNum_D4
-    , testCase "D5" test_minNum_D5    
+    , testCase "D5" test_minNum_D5
     , testCase "F1" test_minNum_F1
     , testCase "F2" test_minNum_F2
     , testCase "F3" test_minNum_F3
     , testCase "F4" test_minNum_F4
-    , testCase "F5" test_minNum_F5    
+    , testCase "F5" test_minNum_F5
     ]
 
 test_minNum_D1 = minNum nan 1 @?= (1 :: D)
@@ -90,12 +90,12 @@ test_maxNaN = testGroup "maxNaN"
     , testCase "D2" test_maxNaN_D2
     , testCase "D3" test_maxNaN_D3
     , testCase "D4" test_maxNaN_D4
-    , testCase "D5" test_maxNaN_D5    
+    , testCase "D5" test_maxNaN_D5
     , testCase "F1" test_maxNaN_F1
     , testCase "F2" test_maxNaN_F2
     , testCase "F3" test_maxNaN_F3
     , testCase "F4" test_maxNaN_F4
-    , testCase "F5" test_maxNaN_F5    
+    , testCase "F5" test_maxNaN_F5
     ]
 
 test_maxNaN_D1 = maxNaN nan 1 @?== (nan :: D)
@@ -120,12 +120,12 @@ test_minNaN = testGroup "minNaN"
     , testCase "D2" test_minNaN_D2
     , testCase "D3" test_minNaN_D3
     , testCase "D4" test_minNaN_D4
-    , testCase "D5" test_minNaN_D5    
+    , testCase "D5" test_minNaN_D5
     , testCase "F1" test_minNaN_F1
     , testCase "F2" test_minNaN_F2
     , testCase "F3" test_minNaN_F3
     , testCase "F4" test_minNaN_F4
-    , testCase "F5" test_minNaN_F5    
+    , testCase "F5" test_minNaN_F5
     ]
 
 test_minNaN_D1 = minNaN nan 1 @?== (nan :: D)
@@ -168,6 +168,13 @@ test_infinity_D2 = infinity > (0 :: D) @?= True
 test_infinity_F1 = isInfinite (infinity :: F) @?= True
 test_infinity_F2 = infinity > (0 :: F) @?= True
 
+
+test_minDenormal = testGroup "minDenormal"
+    [ testCase "D1" (succIEEE 0 @?= (minDenormal :: D))
+    , testCase "D2" (isDenormalized (minDenormal :: D) @?= True)
+    , testCase "F1" (succIEEE 0 @?= (minDenormal :: F))
+    , testCase "F2" (isDenormalized (minDenormal :: F) @?= True)
+    ]
 
 test_minNormal = testGroup "minNormal"
     [ testCase "D" (go (minNormal :: D))
@@ -274,19 +281,19 @@ test_bisectIEEE = testGroup "bisectIEEE"
     , testCase "D2" test_bisectIEEE_D2
     , testCase "D3" test_bisectIEEE_D3
     , testCase "D4" test_bisectIEEE_D4
-    , testCase "D5" test_bisectIEEE_D5            
-    , testCase "D6" test_bisectIEEE_D6            
-    , testCase "D7" test_bisectIEEE_D7                    
-    , testCase "D8" test_bisectIEEE_D8    
+    , testCase "D5" test_bisectIEEE_D5
+    , testCase "D6" test_bisectIEEE_D6
+    , testCase "D7" test_bisectIEEE_D7
+    , testCase "D8" test_bisectIEEE_D8
     , testCase "D9" test_bisectIEEE_D9
     , testCase "F1" test_bisectIEEE_F1
     , testCase "F2" test_bisectIEEE_F2
     , testCase "F3" test_bisectIEEE_F3
     , testCase "F4" test_bisectIEEE_F4
-    , testCase "F5" test_bisectIEEE_F5            
-    , testCase "F6" test_bisectIEEE_F6            
-    , testCase "F7" test_bisectIEEE_F7                    
-    , testCase "F8" test_bisectIEEE_F8    
+    , testCase "F5" test_bisectIEEE_F5
+    , testCase "F6" test_bisectIEEE_F6
+    , testCase "F7" test_bisectIEEE_F7
+    , testCase "F8" test_bisectIEEE_F8
     , testCase "F9" test_bisectIEEE_F9
     ]
 
@@ -607,7 +614,7 @@ test_nanPayload = testGroup "nanPayload"
     , testCase "D3" test_nanPayload_D3
     , testCase "F1" test_nanPayload_F1
     , testCase "F2" test_nanPayload_F2
-    , testCase "F3" test_nanPayload_F3    
+    , testCase "F3" test_nanPayload_F3
     ]
 
 test_nanPayload_D1 =
@@ -639,16 +646,16 @@ test_nanPayload_F3 =
 test_copySign = testGroup "copySign"
     [ testCase "D1" test_copySign_D1
     , testCase "D2" test_copySign_D2
-    , testCase "D3" test_copySign_D3    
-    , testCase "D4" test_copySign_D4    
-    , testCase "D5" test_copySign_D5    
-    , testCase "D6" test_copySign_D6                    
+    , testCase "D3" test_copySign_D3
+    , testCase "D4" test_copySign_D4
+    , testCase "D5" test_copySign_D5
+    , testCase "D6" test_copySign_D6
     , testCase "F1" test_copySign_F1
     , testCase "F2" test_copySign_F2
-    , testCase "F3" test_copySign_F3    
-    , testCase "F4" test_copySign_F4    
-    , testCase "F5" test_copySign_F5    
-    , testCase "F6" test_copySign_F6                    
+    , testCase "F3" test_copySign_F3
+    , testCase "F4" test_copySign_F4
+    , testCase "F5" test_copySign_F5
+    , testCase "F6" test_copySign_F6
     ]
 
 test_copySign_D1 =
@@ -682,6 +689,7 @@ test_copySign_F6 =
 test_IEEE = testGroup "IEEE"
     [ test_infinity
     , test_minNormal
+    , test_minDenormal
     , test_maxFinite
     , test_epsilon
     , test_copySign
