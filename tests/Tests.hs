@@ -170,8 +170,10 @@ test_infinity_F2 = infinity > (0 :: F) @?= True
 
 
 test_minDenormal = testGroup "minDenormal"
-    [ testCase "D" (isDenormalized (minDenormal :: D) @?= True)
-    , testCase "F" (isDenormalized (minDenormal :: F) @?= True)
+    [ testCase "D1" (succIEEE 0 @?= (minDenormal :: D))
+    , testCase "D2" (isDenormalized (minDenormal :: D) @?= True)
+    , testCase "F1" (succIEEE 0 @?= (minDenormal :: F))
+    , testCase "F2" (isDenormalized (minDenormal :: F) @?= True)
     ]
 
 test_minNormal = testGroup "minNormal"

@@ -187,7 +187,7 @@ instance IEEE Double where
     {-# INLINE maxNaNPayload #-}
     nanPayload x = c_getnan x
     {-# INLINE nanPayload #-}
-    minDenormal = 4e-324
+    minDenormal = 5e-324
     {-# INLINE minDenormal #-}
     minNormal = 2.2250738585072014e-308
     {-# INLINE minNormal #-}
@@ -220,7 +220,7 @@ instance IEEE CDouble where
     {-# INLINE maxNaNPayload #-}
     nanPayload x = c_getnan (realToFrac x)
     {-# INLINE nanPayload #-}
-    minDenormal = 4e-324
+    minDenormal = 5e-324
     {-# INLINE minDenormal #-}
     minNormal = 2.2250738585072014e-308
     {-# INLINE minNormal #-}
