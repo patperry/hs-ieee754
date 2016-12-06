@@ -27,6 +27,9 @@ class (RealFloat a) => IEEE a where
     -- | Infinity value.
     infinity :: a
 
+    -- | The smallest representable positive value.
+    minDenormal :: a
+
     -- | The smallest representable positive normalized value.
     minNormal :: a
 
@@ -118,6 +121,8 @@ instance IEEE Float where
     {-# INLINE maxNaNPayload #-}
     nanPayload x = fromIntegral $ c_getnanf x
     {-# INLINE nanPayload #-}
+    minDenormal = 1e-45
+    {-# INLINE minDenormal #-}
     minNormal = 1.17549435e-38
     {-# INLINE minNormal #-}
     maxFinite = 3.40282347e+38
@@ -149,6 +154,8 @@ instance IEEE CFloat where
     {-# INLINE maxNaNPayload #-}
     nanPayload x = fromIntegral $ c_getnanf (realToFrac x)
     {-# INLINE nanPayload #-}
+    minDenormal = 1e-45
+    {-# INLINE minDenormal #-}
     minNormal = 1.17549435e-38
     {-# INLINE minNormal #-}
     maxFinite = 3.40282347e+38
@@ -180,6 +187,8 @@ instance IEEE Double where
     {-# INLINE maxNaNPayload #-}
     nanPayload x = c_getnan x
     {-# INLINE nanPayload #-}
+    minDenormal = 4e-324
+    {-# INLINE minDenormal #-}
     minNormal = 2.2250738585072014e-308
     {-# INLINE minNormal #-}
     maxFinite = 1.7976931348623157e+308
@@ -211,6 +220,8 @@ instance IEEE CDouble where
     {-# INLINE maxNaNPayload #-}
     nanPayload x = c_getnan (realToFrac x)
     {-# INLINE nanPayload #-}
+    minDenormal = 4e-324
+    {-# INLINE minDenormal #-}
     minNormal = 2.2250738585072014e-308
     {-# INLINE minNormal #-}
     maxFinite = 1.7976931348623157e+308
