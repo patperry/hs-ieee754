@@ -26,7 +26,9 @@ library
     extensions:      FlexibleInstances
                      ForeignFunctionInterface
 
-    build-depends:   base >= 3 && < 5
+    build-depends:   base >= 3 && < 5,
+                     containers >= 0.3
+
     ghc-options:     -Wall
 
 
